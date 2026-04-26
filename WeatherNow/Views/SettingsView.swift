@@ -50,10 +50,10 @@ struct SettingsView: View {
                                 store.clearSavedCities()
                             } label: {
                                 Text("Clear Saved Cities")
+                                    .padding(.vertical, 10)
                                     .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.red.opacity(0.8))
+                            .weatherGlassButton(prominent: true)
                             .disabled(store.savedCities.isEmpty)
                         }
 
@@ -72,19 +72,19 @@ struct SettingsView: View {
                                 }
                             } label: {
                                 Label("Refresh Current Location", systemImage: "location.fill")
+                                    .padding(.vertical, 10)
                                     .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.white.opacity(0.18))
+                            .weatherGlassButton(prominent: true)
 
                             Button {
                                 store.resetOnboarding()
                             } label: {
                                 Text("Show Onboarding Again")
+                                    .padding(.vertical, 10)
                                     .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(.bordered)
-                            .tint(.white.opacity(0.7))
+                            .weatherGlassButton()
                         }
                     }
                     .padding(20)
@@ -99,6 +99,6 @@ struct SettingsView: View {
             content()
         }
         .padding(18)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .weatherGlassCard(cornerRadius: 26, tint: Color.white.opacity(0.08))
     }
 }

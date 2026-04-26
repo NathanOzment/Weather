@@ -37,5 +37,7 @@ struct AppTabView: View {
                 }
         }
         .tint(Color(red: 0.99, green: 0.84, blue: 0.42))
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
     }
 }

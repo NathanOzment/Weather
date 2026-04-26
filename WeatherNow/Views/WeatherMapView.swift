@@ -96,9 +96,10 @@ struct WeatherMapView: View {
                 } label: {
                     Label("Recenter", systemImage: "scope")
                         .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(Color.white.opacity(0.18))
+                .weatherGlassButton(prominent: true)
             }
 
             Picker("Layer", selection: $layerMode) {
@@ -130,7 +131,7 @@ struct WeatherMapView: View {
             layerLegend
         }
         .padding(18)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 30, style: .continuous))
+        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
     }
 
     private var layerLegend: some View {
@@ -160,7 +161,7 @@ struct WeatherMapView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(10)
-                    .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .weatherGlassChip(cornerRadius: 16, tint: Color.white.opacity(0.08))
                 }
             }
         }
@@ -197,7 +198,7 @@ struct WeatherMapView: View {
                     .foregroundStyle(point.tintColor(for: .alerts))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
-                    .background(Color.white.opacity(0.1), in: Capsule())
+                    .weatherGlassChip(cornerRadius: 18, tint: point.tintColor(for: .alerts).opacity(0.18))
             }
 
             Button {
@@ -207,18 +208,14 @@ struct WeatherMapView: View {
             } label: {
                 Label(point.isActive ? "Viewing This City" : "Open Forecast", systemImage: point.isActive ? "checkmark.circle.fill" : "arrow.up.right.circle.fill")
                     .font(.subheadline.weight(.semibold))
+                    .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(point.isActive ? Color.white.opacity(0.16) : point.tintColor(for: layerMode).opacity(0.85))
+            .weatherGlassButton(prominent: !point.isActive)
             .disabled(point.isActive)
         }
         .padding(20)
-        .background(point.tintColor(for: layerMode).opacity(0.18), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-        )
+        .weatherGlassCard(cornerRadius: 28, tint: point.tintColor(for: layerMode).opacity(0.12))
     }
 
     private var cityRail: some View {
@@ -250,9 +247,9 @@ struct WeatherMapView: View {
                             }
                             .frame(width: 156, alignment: .leading)
                             .padding(16)
-                            .background(
-                                (point.cityName == selectedCityName ? point.tintColor(for: layerMode).opacity(0.28) : Color.white.opacity(0.08)),
-                                in: RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .weatherGlassCard(
+                                cornerRadius: 24,
+                                tint: point.cityName == selectedCityName ? point.tintColor(for: layerMode).opacity(0.18) : Color.white.opacity(0.08)
                             )
                         }
                         .buttonStyle(.plain)
@@ -272,7 +269,7 @@ struct WeatherMapView: View {
         .foregroundStyle(.white.opacity(0.86))
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(Color.white.opacity(0.1), in: Capsule())
+        .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
     }
 
     private func updateMapPosition() {
@@ -398,7 +395,7 @@ private struct RadarAnnotation: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(.ultraThinMaterial, in: Capsule())
+            .weatherGlassChip(cornerRadius: 18, tint: point.tintColor(for: layerMode).opacity(0.10))
         }
     }
 }

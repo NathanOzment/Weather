@@ -51,15 +51,34 @@ struct WeatherDetailView: View {
     }
 
     private var summaryCard: some View {
+        Group {
+            if #available(iOS 26, *) {
+                GlassEffectContainer(spacing: 18) {
+                    summaryCardContent
+                }
+            } else {
+                summaryCardContent
+            }
+        }
+        .padding(24)
+        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+    }
+
+    private var summaryCardContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: snapshot.current.condition.sfSymbol)
                     .font(.system(size: 38))
                     .symbolRenderingMode(.multicolor)
+                    .padding(14)
+                    .weatherGlassChip(cornerRadius: 22, tint: Color.white.opacity(0.08))
                 Spacer()
                 Text(snapshot.current.condition.title)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.88))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
             }
 
             Text(temperatureUnit.temperatureString(fromCelsius: snapshot.current.temperature))
@@ -69,8 +88,9 @@ struct WeatherDetailView: View {
             Text("H: \(temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.high ?? snapshot.current.temperature))   L: \(temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.low ?? snapshot.current.temperature))")
                 .font(.headline)
                 .foregroundStyle(.white.opacity(0.82))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
         }
-        .padding(24)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 30, style: .continuous))
     }
 }

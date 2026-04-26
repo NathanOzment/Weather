@@ -22,7 +22,7 @@ struct AirQualitySection: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .background(tintColor.opacity(0.22), in: Capsule())
+                    .weatherGlassChip(cornerRadius: 22, tint: tintColor.opacity(0.18))
             }
 
             HStack(spacing: 12) {
@@ -37,7 +37,7 @@ struct AirQualitySection: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(18)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .weatherGlassCard(cornerRadius: 28, tint: tintColor.opacity(0.10))
     }
 
     private func metric(title: String, value: String) -> some View {
@@ -53,7 +53,7 @@ struct AirQualitySection: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
     }
 
     private var tintColor: Color {

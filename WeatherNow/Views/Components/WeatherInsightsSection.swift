@@ -16,6 +16,8 @@ struct WeatherAlertsSection: View {
                             .font(.headline)
                             .foregroundStyle(alert.tintColor)
                             .frame(width: 24)
+                            .padding(10)
+                            .weatherGlassChip(cornerRadius: 16, tint: alert.tintColor.opacity(0.18))
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text(alert.title)
@@ -31,11 +33,7 @@ struct WeatherAlertsSection: View {
                         Spacer()
                     }
                     .padding(16)
-                    .background(alert.backgroundColor, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .stroke(alert.tintColor.opacity(0.34), lineWidth: 1)
-                    )
+                    .weatherGlassCard(cornerRadius: 22, tint: alert.backgroundColor)
                 }
             }
         }
@@ -75,7 +73,7 @@ struct WeatherInsightsSection: View {
         }
         .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
         .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
     }
 }
 
