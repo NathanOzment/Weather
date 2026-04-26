@@ -39,6 +39,7 @@ struct HomeView: View {
                                     store.removeSavedCity(city)
                                 }
                             )
+                            AirQualitySection(airQuality: snapshot.airQuality)
                             WeatherInsightsSection(snapshot: snapshot, temperatureUnit: store.temperatureUnit)
                             ForecastPlannerSection(snapshot: snapshot, temperatureUnit: store.temperatureUnit)
                             HourlyForecastSection(hourly: snapshot.hourly, temperatureUnit: store.temperatureUnit)

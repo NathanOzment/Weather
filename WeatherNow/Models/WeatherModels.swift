@@ -7,6 +7,7 @@ struct WeatherSnapshot: Equatable, Codable {
     let longitude: Double
     let updatedAt: Date
     let current: CurrentConditions
+    let airQuality: AirQuality
     let hourly: [HourlyForecast]
     let daily: [DailyForecast]
 }
@@ -25,6 +26,77 @@ struct CurrentConditions: Equatable, Codable {
     let uvIndex: Int
     let pressure: Int
     let visibility: Int
+}
+
+struct AirQuality: Equatable, Codable {
+    let usAqi: Int
+    let pm25: Double
+    let pm10: Double
+    let ozone: Double
+    let nitrogenDioxide: Double
+
+    var category: AirQualityCategory {
+        AirQualityCategory.from(aqi: usAqi)
+    }
+
+    var dominantPollutant: String {
+        let pollutantLevels = [
+            ("PM2.5", pm25),
+            ("PM10", pm10),
+            ("Ozone", ozone),
+            ("NO2", nitrogenDioxide)
+        ]
+
+        return pollutantLevels.max(by: { $0.1 < $1.1 })?.0 ?? "PM2.5"
+    }
+
+    var healthSummary: String {
+        switch category {
+        case .good:
+            "Air looks clean right now, so outdoor plans should feel comfortable for most people."
+        case .moderate:
+            "Air quality is workable, though extra-sensitive groups may want shorter outdoor stretches."
+        case .unhealthyForSensitive:
+            "Sensitive groups should take it easier outside, especially during longer walks or workouts."
+        case .unhealthy:
+            "Air quality is rough enough that outdoor time is worth limiting when you can."
+        case .veryUnhealthy:
+            "The air is poor today, so indoor plans are the safer call."
+        case .hazardous:
+            "Air conditions are severe. Staying inside is the best move right now."
+        }
+    }
+}
+
+enum AirQualityCategory: String, Codable {
+    case good
+    case moderate
+    case unhealthyForSensitive
+    case unhealthy
+    case veryUnhealthy
+    case hazardous
+
+    var title: String {
+        switch self {
+        case .good: "Good"
+        case .moderate: "Moderate"
+        case .unhealthyForSensitive: "Sensitive Groups"
+        case .unhealthy: "Unhealthy"
+        case .veryUnhealthy: "Very Unhealthy"
+        case .hazardous: "Hazardous"
+        }
+    }
+
+    static func from(aqi: Int) -> AirQualityCategory {
+        switch aqi {
+        case ..<51: .good
+        case ..<101: .moderate
+        case ..<151: .unhealthyForSensitive
+        case ..<201: .unhealthy
+        case ..<301: .veryUnhealthy
+        default: .hazardous
+        }
+    }
 }
 
 struct HourlyForecast: Equatable, Identifiable, Codable {
@@ -183,6 +255,13 @@ enum WeatherSamples {
                 pressure: 1012 + (condition == .clear ? 4 : -2),
                 visibility: condition == .fog ? 4 : 10
             ),
+            airQuality: AirQuality(
+                usAqi: condition == .rain ? 46 : (condition == .clear ? 58 : 72),
+                pm25: condition == .rain ? 7.2 : 13.4,
+                pm10: condition == .rain ? 12.5 : 22.0,
+                ozone: condition == .clear ? 81.0 : 52.0,
+                nitrogenDioxide: condition == .rain ? 14.0 : 19.0
+            ),
             hourly: (0..<5).map { offset in
                 HourlyForecast(
                     time: .now.addingTimeInterval(Double(offset) * 3600),
@@ -221,6 +300,13 @@ enum WeatherSamples {
             uvIndex: 5,
             pressure: 1015,
             visibility: 10
+        ),
+        airQuality: AirQuality(
+            usAqi: 62,
+            pm25: 12.1,
+            pm10: 20.7,
+            ozone: 58.4,
+            nitrogenDioxide: 17.3
         ),
         hourly: [
             HourlyForecast(time: .now, temperature: 20, precipitationChance: 12, condition: .partlyCloudy),

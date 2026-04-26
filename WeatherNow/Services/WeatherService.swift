@@ -29,9 +29,10 @@ struct WeatherService {
         let weatherURL = components.url!
 
         async let weatherData = URLSession.shared.data(from: weatherURL)
+        async let airQualityData = fetchAirQuality(for: coordinates)
         async let locationName = reverseGeocode(coordinates: coordinates)
 
-        let ((data, _), cityName) = try await (weatherData, locationName)
+        let ((data, _), airQuality, cityName) = try await (weatherData, airQualityData, locationName)
         let decoded = try JSONDecoder.weatherDecoder.decode(OpenMeteoForecast.self, from: data)
 
         return WeatherSnapshot(
@@ -49,6 +50,7 @@ struct WeatherService {
                 pressure: Int(decoded.current.surfacePressure.rounded()),
                 visibility: Int((Double(decoded.current.visibility) / 1000).rounded())
             ),
+            airQuality: airQuality,
             hourly: zip(decoded.hourly.time.indices, decoded.hourly.time).prefix(12).map { index, time in
                 HourlyForecast(
                     time: time,
@@ -102,6 +104,28 @@ struct WeatherService {
                 coordinates: Coordinates(latitude: result.latitude, longitude: result.longitude)
             )
         }
+    }
+
+    private func fetchAirQuality(for coordinates: Coordinates) async throws -> AirQuality {
+        var components = URLComponents(string: "https://air-quality-api.open-meteo.com/v1/air-quality")!
+        components.queryItems = [
+            URLQueryItem(name: "latitude", value: "\(coordinates.latitude)"),
+            URLQueryItem(name: "longitude", value: "\(coordinates.longitude)"),
+            URLQueryItem(name: "current", value: "us_aqi,pm2_5,pm10,ozone,nitrogen_dioxide"),
+            URLQueryItem(name: "timezone", value: "auto")
+        ]
+
+        let url = components.url!
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let decoded = try JSONDecoder.weatherDecoder.decode(OpenMeteoAirQuality.self, from: data)
+
+        return AirQuality(
+            usAqi: Int(decoded.current.usAqi.rounded()),
+            pm25: decoded.current.pm25,
+            pm10: decoded.current.pm10,
+            ozone: decoded.current.ozone,
+            nitrogenDioxide: decoded.current.nitrogenDioxide
+        )
     }
 
     private func reverseGeocode(coordinates: Coordinates) async throws -> String {
@@ -193,6 +217,26 @@ private struct OpenMeteoReverseGeocoding: Decodable {
 
     struct Result: Decodable {
         let name: String
+    }
+}
+
+private struct OpenMeteoAirQuality: Decodable {
+    let current: Current
+
+    struct Current: Decodable {
+        let usAqi: Double
+        let pm25: Double
+        let pm10: Double
+        let ozone: Double
+        let nitrogenDioxide: Double
+
+        enum CodingKeys: String, CodingKey {
+            case usAqi = "us_aqi"
+            case pm25 = "pm2_5"
+            case pm10
+            case ozone
+            case nitrogenDioxide = "nitrogen_dioxide"
+        }
     }
 }
 

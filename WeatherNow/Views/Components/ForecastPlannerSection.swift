@@ -120,6 +120,14 @@ private struct ForecastPlanner {
             return "Rain chances stay meaningful, so keep an umbrella or a quick indoor backup nearby."
         }
 
+        if snapshot.airQuality.category == .unhealthyForSensitive || snapshot.airQuality.category == .unhealthy {
+            return "Air quality is a little rough, so lighter outdoor activity would be the more comfortable option."
+        }
+
+        if snapshot.airQuality.category == .veryUnhealthy || snapshot.airQuality.category == .hazardous {
+            return "Air quality is poor enough that indoor plans make more sense than a long day outside."
+        }
+
         if snapshot.current.uvIndex >= 7 {
             return "UV is running high, so sunscreen and a little shade time will go a long way."
         }
