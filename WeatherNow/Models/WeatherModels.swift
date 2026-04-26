@@ -12,6 +12,27 @@ struct WeatherSnapshot: Equatable, Codable {
     let daily: [DailyForecast]
 }
 
+extension WeatherSnapshot {
+    var freshnessText: String {
+        let elapsedMinutes = max(Int(Date().timeIntervalSince(updatedAt) / 60), 0)
+
+        switch elapsedMinutes {
+        case ..<2:
+            return "Updated just now"
+        case ..<60:
+            return "Updated \(elapsedMinutes)m ago"
+        case ..<180:
+            return "Updated \(elapsedMinutes / 60)h ago"
+        default:
+            return "Updated \(updatedAt.formatted(date: .abbreviated, time: .shortened))"
+        }
+    }
+
+    var isStale: Bool {
+        Date().timeIntervalSince(updatedAt) > 60 * 90
+    }
+}
+
 struct SunSchedule: Equatable, Codable {
     let sunrise: Date
     let sunset: Date

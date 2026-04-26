@@ -26,6 +26,9 @@ struct WeatherDetailView: View {
                         Text("Deep Dive")
                             .font(.headline.weight(.medium))
                             .foregroundStyle(.white.opacity(0.75))
+                        Label(snapshot.freshnessText, systemImage: snapshot.isStale ? "clock.badge.exclamationmark.fill" : "clock.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(snapshot.isStale ? Color(red: 0.99, green: 0.84, blue: 0.42) : .white.opacity(0.82))
                     }
 
                     summaryCard

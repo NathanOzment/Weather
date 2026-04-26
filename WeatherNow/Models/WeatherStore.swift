@@ -14,6 +14,7 @@ final class WeatherStore: ObservableObject {
     @Published var lastResolvedLocation = "Current Location"
     @Published var statusMessage: String?
     @Published var isShowingCachedWeather = false
+    @Published var isRefreshingSavedCities = false
     @Published var savedCities: [String]
     @Published var temperatureUnit: TemperatureUnit
     @Published var showingSavedOnly = false
@@ -229,7 +230,48 @@ final class WeatherStore: ObservableObject {
 
     func cachedUpdatedText(for city: String) -> String? {
         guard let snapshot = cachedSnapshots[city] else { return nil }
-        return "Updated \(snapshot.updatedAt.formatted(date: .abbreviated, time: .shortened))"
+        return snapshot.freshnessText
+    }
+
+    func refreshSavedCities() async {
+        guard !savedCities.isEmpty, !isRefreshingSavedCities else { return }
+
+        isRefreshingSavedCities = true
+        errorMessage = nil
+
+        var refreshedSnapshots: [String: WeatherSnapshot] = [:]
+        var failureCount = 0
+
+        for city in savedCities {
+            do {
+                let coordinates = try await weatherService.geocode(city: city)
+                let weather = try await weatherService.fetchWeather(for: coordinates, preferredName: city)
+                refreshedSnapshots[city] = weather
+            } catch {
+                failureCount += 1
+            }
+        }
+
+        for (city, refreshedSnapshot) in refreshedSnapshots {
+            cachedSnapshots[city] = refreshedSnapshot
+            if activeCityName?.caseInsensitiveCompare(city) == .orderedSame {
+                applySnapshot(refreshedSnapshot, showingSavedOnly: true)
+            }
+        }
+
+        persistCachedSnapshots()
+
+        let refreshedCount = refreshedSnapshots.count
+        isShowingCachedWeather = refreshedCount == 0 && failureCount > 0
+        if refreshedCount > 0 && failureCount == 0 {
+            statusMessage = "Updated \(refreshedCount) saved \(refreshedCount == 1 ? "city" : "cities") just now."
+        } else if refreshedCount > 0 {
+            statusMessage = "Updated \(refreshedCount) saved \(refreshedCount == 1 ? "city" : "cities"). \(failureCount) still using saved forecasts."
+        } else if failureCount > 0 {
+            statusMessage = "Saved forecasts stayed available, but live updates could not be reached right now."
+        }
+
+        isRefreshingSavedCities = false
     }
 
     func refreshSuggestions() {

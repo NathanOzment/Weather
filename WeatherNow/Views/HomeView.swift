@@ -14,7 +14,7 @@ struct HomeView: View {
                         BrandHeader(
                             eyebrow: "Right Now",
                             title: store.lastResolvedLocation,
-                            subtitle: store.snapshot.map { "Updated \($0.updatedAt.formatted(date: .omitted, time: .shortened))" } ?? "Search for a city or use your location",
+                            subtitle: store.snapshot?.freshnessText ?? "Search for a city or use your location",
                             symbol: store.snapshot?.current.condition.sfSymbol ?? "cloud.sun.fill"
                         )
                         if let statusMessage = store.statusMessage {

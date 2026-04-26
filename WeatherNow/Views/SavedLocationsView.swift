@@ -26,9 +26,22 @@ struct SavedLocationsView: View {
                             BrandHeader(
                                 eyebrow: "Watchlist",
                                 title: "Your Cities",
-                                subtitle: "\(store.savedCities.count) saved forecasts ready to reopen",
+                                subtitle: store.isRefreshingSavedCities ? "Refreshing your saved forecasts now" : "\(store.savedCities.count) saved forecasts ready to reopen",
                                 symbol: "star.circle.fill"
                             )
+
+                            Button {
+                                Task {
+                                    await store.refreshSavedCities()
+                                }
+                            } label: {
+                                Label(store.isRefreshingSavedCities ? "Refreshing Saved Cities..." : "Refresh Saved Cities", systemImage: store.isRefreshingSavedCities ? "arrow.triangle.2.circlepath.circle.fill" : "arrow.clockwise.circle.fill")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.white.opacity(0.18))
+                            .disabled(store.isRefreshingSavedCities)
 
                             ForEach(store.savedCities, id: \.self) { city in
                                 HStack(spacing: 14) {
@@ -46,6 +59,11 @@ struct SavedLocationsView: View {
                                                 Text(store.cachedUpdatedText(for: city) ?? "Open detailed forecast")
                                                     .font(.subheadline)
                                                     .foregroundStyle(.white.opacity(0.72))
+                                                if let cachedSnapshot = store.cachedSnapshot(for: city), cachedSnapshot.isStale {
+                                                    Text("Saved forecast may be getting stale")
+                                                        .font(.caption.weight(.medium))
+                                                        .foregroundStyle(Color(red: 0.99, green: 0.84, blue: 0.42))
+                                                }
                                             }
 
                                             Spacer()
