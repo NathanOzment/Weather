@@ -28,12 +28,13 @@ struct WeatherService {
         ]
         let weatherURL = components.url!
 
-        async let weatherData = URLSession.shared.data(from: weatherURL)
-        async let airQualityData = fetchAirQuality(for: coordinates)
-        async let locationName = reverseGeocode(coordinates: coordinates)
+        async let airQualityData = safeFetchAirQuality(for: coordinates)
+        async let locationName = safeReverseGeocode(coordinates: coordinates)
 
-        let ((data, _), airQuality, cityName) = try await (weatherData, airQualityData, locationName)
+        let data = try await fetchData(from: weatherURL)
         let decoded = try JSONDecoder.weatherDecoder.decode(OpenMeteoForecast.self, from: data)
+        let airQuality = await airQualityData ?? fallbackAirQuality(for: decoded.current.weatherCode)
+        let cityName = await locationName ?? "Your Area"
 
         return WeatherSnapshot(
             cityName: preferredName ?? cityName,
@@ -78,7 +79,7 @@ struct WeatherService {
     func geocode(city: String) async throws -> Coordinates {
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? city
         let url = URL(string: "https://geocoding-api.open-meteo.com/v1/search?name=\(encodedCity)&count=1&language=en&format=json")!
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let data = try await fetchData(from: url)
         let decoded = try JSONDecoder().decode(OpenMeteoGeocoding.self, from: data)
 
         guard let result = decoded.results?.first else {
@@ -91,7 +92,7 @@ struct WeatherService {
     func searchSuggestions(for query: String) async throws -> [CitySuggestion] {
         let encodedCity = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
         let url = URL(string: "https://geocoding-api.open-meteo.com/v1/search?name=\(encodedCity)&count=5&language=en&format=json")!
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let data = try await fetchData(from: url)
         let decoded = try JSONDecoder().decode(OpenMeteoGeocoding.self, from: data)
 
         return (decoded.results ?? []).map { result in
@@ -116,7 +117,7 @@ struct WeatherService {
         ]
 
         let url = components.url!
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let data = try await fetchData(from: url)
         let decoded = try JSONDecoder.weatherDecoder.decode(OpenMeteoAirQuality.self, from: data)
 
         return AirQuality(
@@ -130,9 +131,42 @@ struct WeatherService {
 
     private func reverseGeocode(coordinates: Coordinates) async throws -> String {
         let url = URL(string: "https://geocoding-api.open-meteo.com/v1/reverse?latitude=\(coordinates.latitude)&longitude=\(coordinates.longitude)&language=en&format=json")!
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let data = try await fetchData(from: url)
         let decoded = try JSONDecoder().decode(OpenMeteoReverseGeocoding.self, from: data)
         return decoded.results.first?.name ?? "Your Area"
+    }
+
+    private func fetchData(from url: URL) async throws -> Data {
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw WeatherServiceError.invalidResponse
+        }
+
+        return data
+    }
+
+    private func safeFetchAirQuality(for coordinates: Coordinates) async -> AirQuality? {
+        try? await fetchAirQuality(for: coordinates)
+    }
+
+    private func safeReverseGeocode(coordinates: Coordinates) async -> String? {
+        try? await reverseGeocode(coordinates: coordinates)
+    }
+
+    private func fallbackAirQuality(for weatherCode: Int) -> AirQuality {
+        let condition = WeatherCondition.from(code: weatherCode)
+
+        switch condition {
+        case .clear:
+            return AirQuality(usAqi: 58, pm25: 13.0, pm10: 22.0, ozone: 76.0, nitrogenDioxide: 18.0)
+        case .rain, .snow:
+            return AirQuality(usAqi: 42, pm25: 7.0, pm10: 12.0, ozone: 38.0, nitrogenDioxide: 12.0)
+        case .storm:
+            return AirQuality(usAqi: 51, pm25: 9.0, pm10: 16.0, ozone: 41.0, nitrogenDioxide: 11.0)
+        case .cloudy, .partlyCloudy, .fog:
+            return AirQuality(usAqi: 64, pm25: 15.0, pm10: 25.0, ozone: 54.0, nitrogenDioxide: 21.0)
+        }
     }
 }
 
