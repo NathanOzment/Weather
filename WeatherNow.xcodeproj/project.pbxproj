@@ -30,6 +30,7 @@
 		AA0000000000000000000121 /* WeatherInsightsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000221 /* WeatherInsightsSection.swift */; };
 		AA0000000000000000000122 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000222 /* Assets.xcassets */; };
 		AA0000000000000000000123 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000223 /* LaunchScreen.storyboard */; };
+		AA0000000000000000000124 /* ForecastPlannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000225 /* ForecastPlannerSection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		AA0000000000000000000222 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA0000000000000000000223 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA0000000000000000000224 /* WeatherNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000225 /* ForecastPlannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastPlannerSection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 				AA0000000000000000000218 /* BrandHeader.swift */,
 				AA0000000000000000000213 /* CurrentConditionsCard.swift */,
 				AA0000000000000000000215 /* DailyForecastSection.swift */,
+				AA0000000000000000000225 /* ForecastPlannerSection.swift */,
 				AA0000000000000000000214 /* HourlyForecastSection.swift */,
 				AA0000000000000000000216 /* SavedCitiesSection.swift */,
 				AA0000000000000000000220 /* SunScheduleCard.swift */,
@@ -223,6 +226,7 @@
 				AA0000000000000000000118 /* BrandHeader.swift in Sources */,
 				AA0000000000000000000113 /* CurrentConditionsCard.swift in Sources */,
 				AA0000000000000000000115 /* DailyForecastSection.swift in Sources */,
+				AA0000000000000000000124 /* ForecastPlannerSection.swift in Sources */,
 				AA0000000000000000000107 /* HomeView.swift in Sources */,
 				AA0000000000000000000114 /* HourlyForecastSection.swift in Sources */,
 				AA0000000000000000000105 /* LocationService.swift in Sources */,

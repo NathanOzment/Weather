@@ -30,6 +30,7 @@ struct WeatherDetailView: View {
 
                     summaryCard
                     TemperatureTrendSection(hourly: snapshot.hourly, temperatureUnit: temperatureUnit)
+                    ForecastPlannerSection(snapshot: snapshot, temperatureUnit: temperatureUnit)
 
                     if let today = snapshot.daily.first {
                         SunScheduleCard(schedule: today.sunSchedule)

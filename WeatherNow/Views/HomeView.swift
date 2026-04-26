@@ -40,6 +40,7 @@ struct HomeView: View {
                                 }
                             )
                             WeatherInsightsSection(snapshot: snapshot, temperatureUnit: store.temperatureUnit)
+                            ForecastPlannerSection(snapshot: snapshot, temperatureUnit: store.temperatureUnit)
                             HourlyForecastSection(hourly: snapshot.hourly, temperatureUnit: store.temperatureUnit)
                             DailyForecastSection(daily: snapshot.daily, temperatureUnit: store.temperatureUnit)
                         } else if store.isLoading {
