@@ -1,5 +1,47 @@
 import SwiftUI
 
+struct WeatherAlertsSection: View {
+    let snapshot: WeatherSnapshot
+
+    var body: some View {
+        if !snapshot.alerts.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Weather Alerts")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white)
+
+                ForEach(snapshot.alerts) { alert in
+                    HStack(alignment: .top, spacing: 14) {
+                        Image(systemName: alert.symbol)
+                            .font(.headline)
+                            .foregroundStyle(alert.tintColor)
+                            .frame(width: 24)
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(alert.title)
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(.white)
+
+                            Text(alert.message)
+                                .font(.subheadline)
+                                .foregroundStyle(.white.opacity(0.8))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+                    }
+                    .padding(16)
+                    .background(alert.backgroundColor, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .stroke(alert.tintColor.opacity(0.34), lineWidth: 1)
+                    )
+                }
+            }
+        }
+    }
+}
+
 struct WeatherInsightsSection: View {
     let snapshot: WeatherSnapshot
     let temperatureUnit: TemperatureUnit
@@ -34,5 +76,29 @@ struct WeatherInsightsSection: View {
         .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
         .padding(16)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+}
+
+private extension WeatherAlert {
+    var tintColor: Color {
+        switch level {
+        case .elevated:
+            Color(red: 0.98, green: 0.79, blue: 0.35)
+        case .warning:
+            Color(red: 0.99, green: 0.57, blue: 0.33)
+        case .severe:
+            Color(red: 0.96, green: 0.36, blue: 0.35)
+        }
+    }
+
+    var backgroundColor: Color {
+        switch level {
+        case .elevated:
+            Color(red: 0.35, green: 0.28, blue: 0.09).opacity(0.4)
+        case .warning:
+            Color(red: 0.39, green: 0.19, blue: 0.08).opacity(0.45)
+        case .severe:
+            Color(red: 0.36, green: 0.10, blue: 0.13).opacity(0.52)
+        }
     }
 }

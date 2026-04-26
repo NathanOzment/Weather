@@ -32,6 +32,7 @@ struct WeatherDetailView: View {
                     }
 
                     summaryCard
+                    WeatherAlertsSection(snapshot: snapshot)
                     AirQualitySection(airQuality: snapshot.airQuality)
                     TemperatureTrendSection(hourly: snapshot.hourly, temperatureUnit: temperatureUnit)
                     ForecastPlannerSection(snapshot: snapshot, temperatureUnit: temperatureUnit)

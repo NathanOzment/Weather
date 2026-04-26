@@ -31,6 +31,108 @@ extension WeatherSnapshot {
     var isStale: Bool {
         Date().timeIntervalSince(updatedAt) > 60 * 90
     }
+
+    var alerts: [WeatherAlert] {
+        var results: [WeatherAlert] = []
+
+        let highestPrecipitationChance = hourly.map(\.precipitationChance).max() ?? daily.first?.precipitationChance ?? 0
+        let hasStormRisk = current.condition == .storm || hourly.contains(where: { $0.condition == .storm })
+        let apparentTemperature = current.apparentTemperature
+
+        if hasStormRisk || highestPrecipitationChance >= 80 {
+            results.append(
+                WeatherAlert(
+                    id: "storm",
+                    title: hasStormRisk ? "Storm Alert" : "Heavy Rain Alert",
+                    message: hasStormRisk
+                        ? "Storm conditions are active or approaching, so outdoor plans may need to pause."
+                        : "Rain chances are high enough that a backup indoor plan is a smart call today.",
+                    symbol: hasStormRisk ? "cloud.bolt.rain.fill" : "cloud.heavyrain.fill",
+                    level: hasStormRisk ? .severe : .warning
+                )
+            )
+        }
+
+        if apparentTemperature >= 38 || current.temperature >= 34 {
+            results.append(
+                WeatherAlert(
+                    id: "heat",
+                    title: "Heat Advisory",
+                    message: "Hot conditions can wear you down quickly. Water, shade, and lighter activity will help.",
+                    symbol: "thermometer.sun.fill",
+                    level: apparentTemperature >= 42 ? .severe : .warning
+                )
+            )
+        } else if apparentTemperature <= -5 || current.temperature <= -2 {
+            results.append(
+                WeatherAlert(
+                    id: "cold",
+                    title: "Cold Advisory",
+                    message: "Cold air and wind can bite fast, so heavier layers will make a real difference.",
+                    symbol: "thermometer.snowflake",
+                    level: apparentTemperature <= -10 ? .severe : .warning
+                )
+            )
+        }
+
+        if current.windSpeed >= 38 {
+            results.append(
+                WeatherAlert(
+                    id: "wind",
+                    title: "Wind Advisory",
+                    message: "Gusty conditions can make it feel sharper outside and may affect travel or outdoor setups.",
+                    symbol: "wind",
+                    level: current.windSpeed >= 55 ? .severe : .warning
+                )
+            )
+        }
+
+        if current.visibility <= 3 || current.condition == .fog {
+            results.append(
+                WeatherAlert(
+                    id: "visibility",
+                    title: "Low Visibility",
+                    message: "Visibility is reduced enough that slower driving and extra awareness are worth it.",
+                    symbol: "eye.trianglebadge.exclamationmark",
+                    level: current.visibility <= 1 ? .severe : .elevated
+                )
+            )
+        }
+
+        if current.uvIndex >= 8 {
+            results.append(
+                WeatherAlert(
+                    id: "uv",
+                    title: "High UV",
+                    message: "Sun exposure adds up fast today, so sunscreen and a little shade time are worth planning for.",
+                    symbol: "sun.max.trianglebadge.exclamationmark.fill",
+                    level: current.uvIndex >= 10 ? .warning : .elevated
+                )
+            )
+        }
+
+        if airQuality.category == .unhealthyForSensitive || airQuality.category == .unhealthy || airQuality.category == .veryUnhealthy || airQuality.category == .hazardous {
+            results.append(
+                WeatherAlert(
+                    id: "air",
+                    title: "Air Quality Alert",
+                    message: airQuality.healthSummary,
+                    symbol: "aqi.medium",
+                    level: airQuality.category == .veryUnhealthy || airQuality.category == .hazardous ? .severe : .warning
+                )
+            )
+        }
+
+        return results
+            .sorted { lhs, rhs in
+                if lhs.level.rawValue != rhs.level.rawValue {
+                    return lhs.level.rawValue > rhs.level.rawValue
+                }
+                return lhs.title < rhs.title
+            }
+            .prefix(3)
+            .map { $0 }
+    }
 }
 
 struct SunSchedule: Equatable, Codable {
@@ -164,6 +266,20 @@ struct CitySuggestion: Equatable, Identifiable, Codable {
     let name: String
     let subtitle: String
     let coordinates: Coordinates
+}
+
+struct WeatherAlert: Equatable, Identifiable {
+    let id: String
+    let title: String
+    let message: String
+    let symbol: String
+    let level: WeatherAlertLevel
+}
+
+enum WeatherAlertLevel: Int, Equatable {
+    case elevated
+    case warning
+    case severe
 }
 
 enum TemperatureUnit: String, CaseIterable, Codable, Identifiable {

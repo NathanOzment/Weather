@@ -30,6 +30,7 @@ struct HomeView: View {
                                 onSaveCity: { store.addCurrentCityToSaved() },
                                 onShowDetails: { showingDetails = true }
                             )
+                            WeatherAlertsSection(snapshot: snapshot)
                             SavedCitiesSection(
                                 savedCities: store.savedCities,
                                 activeCity: store.activeCityName,
