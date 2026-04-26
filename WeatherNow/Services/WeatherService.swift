@@ -14,6 +14,17 @@ enum WeatherServiceError: LocalizedError {
     }
 }
 
+private extension URLError.Code {
+    var isRetryableWeatherFailure: Bool {
+        switch self {
+        case .timedOut, .cannotFindHost, .cannotConnectToHost, .networkConnectionLost, .notConnectedToInternet, .dnsLookupFailed:
+            true
+        default:
+            false
+        }
+    }
+}
+
 struct WeatherService {
     func fetchWeather(for coordinates: Coordinates, preferredName: String? = nil) async throws -> WeatherSnapshot {
         var components = URLComponents(string: "https://api.open-meteo.com/v1/forecast")!
@@ -137,13 +148,44 @@ struct WeatherService {
     }
 
     private func fetchData(from url: URL) async throws -> Data {
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var lastError: Error?
 
-        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw WeatherServiceError.invalidResponse
+        for attempt in 0..<3 {
+            do {
+                let (data, response) = try await URLSession.shared.data(from: url)
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    throw WeatherServiceError.invalidResponse
+                }
+
+                if 200..<300 ~= httpResponse.statusCode {
+                    return data
+                }
+
+                let isRetryableStatus = httpResponse.statusCode >= 500 || httpResponse.statusCode == 429
+                if isRetryableStatus, attempt < 2 {
+                    try? await Task.sleep(nanoseconds: UInt64((attempt + 1) * 350_000_000))
+                    continue
+                }
+
+                throw WeatherServiceError.invalidResponse
+            } catch {
+                lastError = error
+
+                if
+                    let urlError = error as? URLError,
+                    urlError.code.isRetryableWeatherFailure,
+                    attempt < 2
+                {
+                    try? await Task.sleep(nanoseconds: UInt64((attempt + 1) * 350_000_000))
+                    continue
+                }
+
+                throw error
+            }
         }
 
-        return data
+        throw lastError ?? WeatherServiceError.invalidResponse
     }
 
     private func safeFetchAirQuality(for coordinates: Coordinates) async -> AirQuality? {

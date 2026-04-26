@@ -17,6 +17,9 @@ struct HomeView: View {
                             subtitle: store.snapshot.map { "Updated \($0.updatedAt.formatted(date: .omitted, time: .shortened))" } ?? "Search for a city or use your location",
                             symbol: store.snapshot?.current.condition.sfSymbol ?? "cloud.sun.fill"
                         )
+                        if let statusMessage = store.statusMessage {
+                            statusBanner(statusMessage)
+                        }
                         searchBar
                         preferencesBar
 
@@ -212,6 +215,28 @@ struct HomeView: View {
                     .background(Color.white.opacity(0.14), in: Capsule())
             }
         }
+    }
+
+    private func statusBanner(_ message: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: store.isShowingCachedWeather ? "clock.arrow.circlepath" : "info.circle.fill")
+                .foregroundStyle(store.isShowingCachedWeather ? Color(red: 0.99, green: 0.84, blue: 0.42) : .white)
+
+            Text(message)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white)
+
+            Spacer()
+        }
+        .padding(14)
+        .background(
+            store.isShowingCachedWeather ? Color(red: 0.33, green: 0.26, blue: 0.10).opacity(0.58) : Color.white.opacity(0.12),
+            in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
     }
 
     private func gradientColors(for condition: WeatherCondition) -> [Color] {

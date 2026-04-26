@@ -12,6 +12,8 @@ final class WeatherStore: ObservableObject {
     @Published var isFetchingSuggestions = false
     @Published var hasCompletedOnboarding: Bool
     @Published var lastResolvedLocation = "Current Location"
+    @Published var statusMessage: String?
+    @Published var isShowingCachedWeather = false
     @Published var savedCities: [String]
     @Published var temperatureUnit: TemperatureUnit
     @Published var showingSavedOnly = false
@@ -95,16 +97,24 @@ final class WeatherStore: ObservableObject {
     func refresh() async {
         isLoading = true
         errorMessage = nil
+        statusMessage = nil
+        isShowingCachedWeather = false
 
         do {
             let coordinates = try await locationService.requestCurrentLocation()
             let weather = try await weatherService.fetchWeather(for: coordinates)
             applySnapshot(weather, showingSavedOnly: false)
         } catch {
-            if snapshot == nil {
+            if let fallback = activeCityName.flatMap(cachedSnapshot(matching:)) ?? snapshot {
+                applySnapshot(fallback, showingSavedOnly: showingSavedOnly)
+                showCachedWeatherMessage(for: fallback)
+            } else if snapshot == nil {
                 snapshot = WeatherSamples.snapshot
+                statusMessage = "Showing sample conditions while the live forecast reconnects."
             }
-            errorMessage = error.localizedDescription
+            if statusMessage == nil {
+                errorMessage = error.localizedDescription
+            }
         }
 
         isLoading = false
@@ -116,6 +126,8 @@ final class WeatherStore: ObservableObject {
 
         isLoading = true
         errorMessage = nil
+        statusMessage = nil
+        isShowingCachedWeather = false
 
         do {
             let coordinates = try await weatherService.geocode(city: trimmedQuery)
@@ -124,7 +136,12 @@ final class WeatherStore: ObservableObject {
             recordRecentSearch(weather.cityName)
             suggestions = []
         } catch {
-            errorMessage = error.localizedDescription
+            if let fallback = cachedSnapshot(matching: trimmedQuery) {
+                applySnapshot(fallback, showingSavedOnly: true)
+                showCachedWeatherMessage(for: fallback)
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
 
         isLoading = false
@@ -133,6 +150,8 @@ final class WeatherStore: ObservableObject {
     func selectSuggestion(_ suggestion: CitySuggestion) async {
         isLoading = true
         errorMessage = nil
+        statusMessage = nil
+        isShowingCachedWeather = false
 
         do {
             let weather = try await weatherService.fetchWeather(for: suggestion.coordinates, preferredName: suggestion.name)
@@ -140,7 +159,12 @@ final class WeatherStore: ObservableObject {
             recordRecentSearch(weather.cityName)
             suggestions = []
         } catch {
-            errorMessage = error.localizedDescription
+            if let fallback = cachedSnapshot(matching: suggestion.name) {
+                applySnapshot(fallback, showingSavedOnly: true)
+                showCachedWeatherMessage(for: fallback)
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
 
         isLoading = false
@@ -274,6 +298,9 @@ final class WeatherStore: ObservableObject {
         lastResolvedLocation = weather.cityName
         searchQuery = weather.cityName
         self.showingSavedOnly = showingSavedOnly
+        if !isShowingCachedWeather {
+            statusMessage = nil
+        }
         cachedSnapshots[weather.cityName] = weather
         if !isDemoMode {
             defaults.set(weather.cityName, forKey: lastViewedCityKey)
@@ -327,6 +354,20 @@ final class WeatherStore: ObservableObject {
         if let data = try? JSONEncoder().encode(cachedSnapshots) {
             defaults.set(data, forKey: cachedSnapshotsKey)
         }
+    }
+
+    private func cachedSnapshot(matching city: String) -> WeatherSnapshot? {
+        if let exact = cachedSnapshots[city] {
+            return exact
+        }
+
+        let lowercaseCity = city.lowercased()
+        return cachedSnapshots.first { key, _ in key.lowercased() == lowercaseCity }?.value
+    }
+
+    private func showCachedWeatherMessage(for snapshot: WeatherSnapshot) {
+        isShowingCachedWeather = true
+        statusMessage = "Showing saved conditions for \(snapshot.cityName) while live weather reconnects."
     }
 
     private func configureDemoMode() {
