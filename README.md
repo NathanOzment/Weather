@@ -58,7 +58,7 @@ No API key is required for the current version.
 - `Map` presents a radar-inspired comparison of the active city and saved locations with switchable weather layers.
 - `Saved` opens cached forecasts fast and refreshes them in the background.
 - `Saved` now compares your watchlist and points out the strongest city for the day.
-- `Liquid Glass` styling now carries through the app’s hero cards, map surfaces, detail cards, alerts, settings panels, chips, and actions on iOS 26+ with native SwiftUI APIs.
+- `Liquid Glass` styling now carries through the app’s onboarding flow, hero cards, search controls, map surfaces, detail cards, planner/forecast sections, alerts, settings panels, chips, and actions on iOS 26+ with native SwiftUI APIs.
 - `Settings` handles units, refresh, onboarding reset, and saved-city cleanup.
 
 ## Next ideas

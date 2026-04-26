@@ -35,57 +35,75 @@ struct OnboardingView: View {
             backgroundGradient
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 24) {
-                HStack {
-                    Text("WeatherNow")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                    Spacer()
-                    Button("Skip") {
-                        Task {
-                            await finishOnboarding()
-                        }
+            Group {
+                if #available(iOS 26, *) {
+                    GlassEffectContainer(spacing: 20) {
+                        onboardingContent
                     }
-                    .foregroundStyle(.white.opacity(0.82))
+                } else {
+                    onboardingContent
                 }
-
-                Spacer()
-
-                card(for: pages[page])
-
-                if page == pages.count - 1 {
-                    setupControls
-                }
-
-                HStack(spacing: 10) {
-                    ForEach(pages.indices, id: \.self) { index in
-                        Capsule()
-                            .fill(index == page ? Color.white : Color.white.opacity(0.28))
-                            .frame(width: index == page ? 28 : 10, height: 10)
-                    }
-                }
-
-                Button {
-                    if page == pages.count - 1 {
-                        Task {
-                            await finishOnboarding()
-                        }
-                    } else {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.88)) {
-                            page += 1
-                        }
-                    }
-                } label: {
-                    Text(buttonTitle)
-                        .font(.headline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
-                        .background(Color.white, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-                        .foregroundStyle(Color.black.opacity(0.82))
-                }
-                .disabled(isFinishing)
             }
             .padding(24)
+        }
+    }
+
+    private var onboardingContent: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            HStack {
+                Text("WeatherNow")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                Spacer()
+                Button("Skip") {
+                    Task {
+                        await finishOnboarding()
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .foregroundStyle(.white.opacity(0.92))
+                .weatherGlassButton()
+            }
+
+            Spacer()
+
+            card(for: pages[page])
+
+            if page == pages.count - 1 {
+                setupControls
+            }
+
+            HStack(spacing: 10) {
+                ForEach(pages.indices, id: \.self) { index in
+                    Capsule()
+                        .fill(index == page ? Color.white : Color.white.opacity(0.28))
+                        .frame(width: index == page ? 28 : 10, height: 10)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+
+            Button {
+                if page == pages.count - 1 {
+                    Task {
+                        await finishOnboarding()
+                    }
+                } else {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.88)) {
+                        page += 1
+                    }
+                }
+            } label: {
+                Text(buttonTitle)
+                    .font(.headline.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 18)
+            }
+            .foregroundStyle(.white)
+            .weatherGlassButton(prominent: true)
+            .disabled(isFinishing)
         }
     }
 
@@ -132,7 +150,7 @@ struct OnboardingView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(24)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 34, style: .continuous))
+        .weatherGlassCard(cornerRadius: 34, tint: Color.white.opacity(0.08))
     }
 
     private var setupControls: some View {
@@ -162,19 +180,20 @@ struct OnboardingView: View {
                                 .font(.caption.weight(.semibold))
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 10)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                        .fill(selectedStarterCity == city ? Color.white.opacity(0.28) : Color.white.opacity(0.12))
-                                )
                                 .foregroundStyle(.white)
                         }
                         .buttonStyle(.plain)
+                        .weatherGlassChip(
+                            cornerRadius: 16,
+                            tint: selectedStarterCity == city ? Color.white.opacity(0.18) : Color.white.opacity(0.08),
+                            interactive: true
+                        )
                     }
                 }
             }
         }
         .padding(20)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .weatherGlassCard(cornerRadius: 26, tint: Color.white.opacity(0.08))
     }
 
     private func finishOnboarding() async {

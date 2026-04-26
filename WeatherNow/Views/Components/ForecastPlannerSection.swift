@@ -46,6 +46,8 @@ struct ForecastPlannerSection: View {
             Image(systemName: icon)
                 .font(.headline)
                 .foregroundStyle(tint)
+                .padding(10)
+                .weatherGlassChip(cornerRadius: 16, tint: tint.opacity(0.16))
 
             Text(title)
                 .font(.headline.weight(.semibold))
@@ -58,7 +60,7 @@ struct ForecastPlannerSection: View {
         }
         .frame(maxWidth: .infinity, minHeight: 140, alignment: .topLeading)
         .padding(18)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
     }
 }
 

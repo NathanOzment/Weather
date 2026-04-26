@@ -28,7 +28,7 @@ struct HourlyForecastSection: View {
                         .foregroundStyle(.white)
                         .frame(width: 78)
                         .padding(.vertical, 16)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                        .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
                     }
                 }
                 .padding(.vertical, 4)

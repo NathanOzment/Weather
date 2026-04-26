@@ -31,6 +31,8 @@ struct SunScheduleCard: View {
             Image(systemName: icon)
                 .foregroundStyle(accent)
                 .font(.title3)
+                .padding(10)
+                .weatherGlassChip(cornerRadius: 16, tint: accent.opacity(0.16))
             Text(title)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.white.opacity(0.72))
@@ -40,6 +42,6 @@ struct SunScheduleCard: View {
         }
         .frame(maxWidth: .infinity, minHeight: 106, alignment: .topLeading)
         .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
     }
 }

@@ -40,7 +40,7 @@ struct TemperatureTrendSection: View {
             }
             .frame(height: 180)
             .padding(18)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .weatherGlassCard(cornerRadius: 28, tint: Color.white.opacity(0.08))
         }
     }
 

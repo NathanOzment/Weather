@@ -144,11 +144,12 @@ struct HomeView: View {
                     await store.searchCity()
                 }
             }
-            .buttonStyle(.borderedProminent)
-            .tint(Color.white.opacity(0.2))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .weatherGlassButton(prominent: true)
         }
         .padding(14)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .weatherGlassCard(cornerRadius: 20, tint: Color.white.opacity(0.08))
         .overlay(alignment: .bottom) {
             if !store.suggestions.isEmpty {
                 suggestionList
@@ -187,7 +188,7 @@ struct HomeView: View {
                 }
             }
         }
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.08))
         .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
     }
 
@@ -213,8 +214,8 @@ struct HomeView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
-                    .background(Color.white.opacity(0.14), in: Capsule())
             }
+            .weatherGlassButton()
         }
     }
 
@@ -230,13 +231,9 @@ struct HomeView: View {
             Spacer()
         }
         .padding(14)
-        .background(
-            store.isShowingCachedWeather ? Color(red: 0.33, green: 0.26, blue: 0.10).opacity(0.58) : Color.white.opacity(0.12),
-            in: RoundedRectangle(cornerRadius: 18, style: .continuous)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        .weatherGlassCard(
+            cornerRadius: 18,
+            tint: store.isShowingCachedWeather ? Color(red: 0.33, green: 0.26, blue: 0.10).opacity(0.32) : Color.white.opacity(0.08)
         )
     }
 

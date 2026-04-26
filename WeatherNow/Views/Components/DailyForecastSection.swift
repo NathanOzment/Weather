@@ -37,7 +37,7 @@ struct DailyForecastSection: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .weatherGlassCard(cornerRadius: 22, tint: Color.white.opacity(0.08))
                 }
             }
         }
