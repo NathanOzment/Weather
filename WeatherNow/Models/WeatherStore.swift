@@ -16,6 +16,7 @@ final class WeatherStore: ObservableObject {
     @Published var isShowingCachedWeather = false
     @Published var isRefreshingSavedCities = false
     @Published var savedCities: [String]
+    @Published var selectedTab: AppTab
     @Published var temperatureUnit: TemperatureUnit
     @Published var showingSavedOnly = false
 
@@ -81,6 +82,7 @@ final class WeatherStore: ObservableObject {
         } else {
             self.temperatureUnit = .fahrenheit
         }
+        self.selectedTab = ProcessInfo.processInfo.arguments.contains("-demo-map") ? .map : .today
 
         if isDemoMode {
             configureDemoMode()
@@ -172,6 +174,7 @@ final class WeatherStore: ObservableObject {
     }
 
     func loadSavedCity(_ city: String) async {
+        selectedTab = .today
         if let cached = cachedSnapshot(for: city) {
             applySnapshot(cached, showingSavedOnly: true)
         }
@@ -272,6 +275,25 @@ final class WeatherStore: ObservableObject {
         }
 
         isRefreshingSavedCities = false
+    }
+
+    func processPendingIntentActionIfNeeded() async {
+        guard let action = WeatherIntentCoordinator.consumePendingAction() else { return }
+        if !hasCompletedOnboarding {
+            completeOnboarding()
+        }
+
+        switch action.kind {
+        case .openSavedCity:
+            guard let cityName = action.cityName else { return }
+            await loadSavedCity(cityName)
+        case .refreshCurrentForecast:
+            selectedTab = .today
+            await refresh()
+        case .refreshSavedCities:
+            selectedTab = .saved
+            await refreshSavedCities()
+        }
     }
 
     func refreshSuggestions() {

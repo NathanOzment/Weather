@@ -32,6 +32,7 @@
 		AA0000000000000000000123 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000223 /* LaunchScreen.storyboard */; };
 		AA0000000000000000000124 /* ForecastPlannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000225 /* ForecastPlannerSection.swift */; };
 		AA0000000000000000000125 /* AirQualitySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000226 /* AirQualitySection.swift */; };
+		AA0000000000000000000126 /* WeatherIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000227 /* WeatherIntents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		AA0000000000000000000224 /* WeatherNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0000000000000000000225 /* ForecastPlannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastPlannerSection.swift; sourceTree = "<group>"; };
 		AA0000000000000000000226 /* AirQualitySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualitySection.swift; sourceTree = "<group>"; };
+		AA0000000000000000000227 /* WeatherIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherIntents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000201 /* WeatherNowApp.swift */,
+				AA0000000000000000000227 /* WeatherIntents.swift */,
 				AA0000000000000000000222 /* Assets.xcassets */,
 				AA0000000000000000000223 /* LaunchScreen.storyboard */,
 				AA0000000000000000000404 /* Models */,
@@ -243,6 +246,7 @@
 				AA0000000000000000000111 /* WeatherDetailView.swift in Sources */,
 				AA0000000000000000000121 /* WeatherInsightsSection.swift in Sources */,
 				AA0000000000000000000112 /* WeatherMapView.swift in Sources */,
+				AA0000000000000000000126 /* WeatherIntents.swift in Sources */,
 				AA0000000000000000000102 /* WeatherModels.swift in Sources */,
 				AA0000000000000000000104 /* WeatherService.swift in Sources */,
 				AA0000000000000000000103 /* WeatherStore.swift in Sources */,

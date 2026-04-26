@@ -15,6 +15,7 @@ WeatherNow is a native SwiftUI weather app for iPhone with a polished forecast d
 - Air quality tracking with AQI context, pollutant highlights, and health guidance.
 - Alert-style weather guidance for heat, storms, wind, visibility, UV, and rough air conditions.
 - Planning guidance that turns forecast data into simple timing, layering, and caution advice.
+- App Intents shortcuts for opening saved cities and refreshing forecasts from Siri, Spotlight, and Shortcuts.
 - Saved cities with local caching and last-view restore.
 - City search with recent searches and live suggestion results.
 - A dedicated map tab for comparing tracked cities spatially.
@@ -51,6 +52,7 @@ No API key is required for the current version.
 - `Air Quality` adds AQI context so the app can guide outdoor plans more intelligently.
 - `Weather Alerts` surfaces the biggest forecast risks in a quick, readable card instead of leaving them buried in raw numbers.
 - `Plan Your Day` helps translate conditions into practical advice instead of just raw numbers.
+- `Shortcuts` exposes saved-city and refresh actions to Siri, Spotlight, and the Shortcuts app.
 - `Map` presents a radar-inspired comparison of the active city and saved locations.
 - `Saved` opens cached forecasts fast and refreshes them in the background.
 - `Settings` handles units, refresh, onboarding reset, and saved-city cleanup.
@@ -58,5 +60,5 @@ No API key is required for the current version.
 ## Next ideas
 
 - Real precipitation radar tiles.
-- Widgets and App Intents shortcuts.
+- Widgets.
 - Additional screenshot coverage for the onboarding and saved-city flows.

@@ -1,6 +1,6 @@
 import SwiftUI
 
-private enum AppTab: Hashable {
+enum AppTab: Hashable {
     case today
     case map
     case saved
@@ -9,10 +9,9 @@ private enum AppTab: Hashable {
 
 struct AppTabView: View {
     @ObservedObject var store: WeatherStore
-    @State private var selectedTab: AppTab = ProcessInfo.processInfo.arguments.contains("-demo-map") ? .map : .today
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $store.selectedTab) {
             HomeView(store: store)
                 .tag(AppTab.today)
                 .tabItem {
