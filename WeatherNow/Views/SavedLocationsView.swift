@@ -43,6 +43,11 @@ struct SavedLocationsView: View {
                             .tint(.white.opacity(0.18))
                             .disabled(store.isRefreshingSavedCities)
 
+                            CityComparisonSection(
+                                snapshots: store.savedCities.compactMap { store.cachedSnapshot(for: $0) },
+                                temperatureUnit: store.temperatureUnit
+                            )
+
                             ForEach(store.savedCities, id: \.self) { city in
                                 HStack(spacing: 14) {
                                     Button {

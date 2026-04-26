@@ -33,6 +33,7 @@
 		AA0000000000000000000124 /* ForecastPlannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000225 /* ForecastPlannerSection.swift */; };
 		AA0000000000000000000125 /* AirQualitySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000226 /* AirQualitySection.swift */; };
 		AA0000000000000000000126 /* WeatherIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000227 /* WeatherIntents.swift */; };
+		AA0000000000000000000127 /* CityComparisonSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000228 /* CityComparisonSection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +64,7 @@
 		AA0000000000000000000225 /* ForecastPlannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastPlannerSection.swift; sourceTree = "<group>"; };
 		AA0000000000000000000226 /* AirQualitySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualitySection.swift; sourceTree = "<group>"; };
 		AA0000000000000000000227 /* WeatherIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherIntents.swift; sourceTree = "<group>"; };
+		AA0000000000000000000228 /* CityComparisonSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityComparisonSection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +147,7 @@
 				AA0000000000000000000226 /* AirQualitySection.swift */,
 				AA0000000000000000000217 /* BrandBackground.swift */,
 				AA0000000000000000000218 /* BrandHeader.swift */,
+				AA0000000000000000000228 /* CityComparisonSection.swift */,
 				AA0000000000000000000213 /* CurrentConditionsCard.swift */,
 				AA0000000000000000000215 /* DailyForecastSection.swift */,
 				AA0000000000000000000225 /* ForecastPlannerSection.swift */,
@@ -231,6 +234,7 @@
 				AA0000000000000000000106 /* AppTabView.swift in Sources */,
 				AA0000000000000000000117 /* BrandBackground.swift in Sources */,
 				AA0000000000000000000118 /* BrandHeader.swift in Sources */,
+				AA0000000000000000000127 /* CityComparisonSection.swift in Sources */,
 				AA0000000000000000000113 /* CurrentConditionsCard.swift in Sources */,
 				AA0000000000000000000115 /* DailyForecastSection.swift in Sources */,
 				AA0000000000000000000124 /* ForecastPlannerSection.swift in Sources */,
