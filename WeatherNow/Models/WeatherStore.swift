@@ -20,6 +20,30 @@ final class WeatherStore: ObservableObject {
         snapshot?.cityName
     }
 
+    var mapSnapshots: [WeatherSnapshot] {
+        var ordered: [WeatherSnapshot] = []
+        var seen = Set<String>()
+
+        if let snapshot {
+            ordered.append(snapshot)
+            seen.insert(snapshot.cityName.lowercased())
+        }
+
+        for city in savedCities {
+            guard
+                !seen.contains(city.lowercased()),
+                let cached = cachedSnapshots[city]
+            else {
+                continue
+            }
+
+            ordered.append(cached)
+            seen.insert(city.lowercased())
+        }
+
+        return ordered
+    }
+
     private let weatherService: WeatherService
     private let locationService: LocationService
     private let defaults: UserDefaults
@@ -29,6 +53,7 @@ final class WeatherStore: ObservableObject {
     private let hasCompletedOnboardingKey = "hasCompletedOnboarding"
     private let lastViewedCityKey = "lastViewedCity"
     private let cachedSnapshotsKey = "cachedSnapshots"
+    private let isDemoMode: Bool
     private var cachedSnapshots: [String: WeatherSnapshot]
     private var suggestionTask: Task<Void, Never>?
 
@@ -40,6 +65,7 @@ final class WeatherStore: ObservableObject {
         self.weatherService = weatherService
         self.locationService = locationService ?? LocationService()
         self.defaults = defaults
+        self.isDemoMode = ProcessInfo.processInfo.arguments.contains("-demo-mode")
         self.savedCities = defaults.stringArray(forKey: savedCitiesKey) ?? []
         self.recentSearches = defaults.stringArray(forKey: recentSearchesKey) ?? []
         self.hasCompletedOnboarding = defaults.object(forKey: hasCompletedOnboardingKey) as? Bool ?? false
@@ -51,6 +77,10 @@ final class WeatherStore: ObservableObject {
             self.temperatureUnit = unit
         } else {
             self.temperatureUnit = .fahrenheit
+        }
+
+        if isDemoMode {
+            configureDemoMode()
         }
     }
 
@@ -230,10 +260,12 @@ final class WeatherStore: ObservableObject {
     }
 
     private func persistSavedCities() {
+        guard !isDemoMode else { return }
         defaults.set(savedCities, forKey: savedCitiesKey)
     }
 
     private func persistRecentSearches() {
+        guard !isDemoMode else { return }
         defaults.set(recentSearches, forKey: recentSearchesKey)
     }
 
@@ -243,8 +275,10 @@ final class WeatherStore: ObservableObject {
         searchQuery = weather.cityName
         self.showingSavedOnly = showingSavedOnly
         cachedSnapshots[weather.cityName] = weather
-        defaults.set(weather.cityName, forKey: lastViewedCityKey)
-        persistCachedSnapshots()
+        if !isDemoMode {
+            defaults.set(weather.cityName, forKey: lastViewedCityKey)
+            persistCachedSnapshots()
+        }
     }
 
     private func recordRecentSearch(_ city: String) {
@@ -289,9 +323,19 @@ final class WeatherStore: ObservableObject {
     }
 
     private func persistCachedSnapshots() {
+        guard !isDemoMode else { return }
         if let data = try? JSONEncoder().encode(cachedSnapshots) {
             defaults.set(data, forKey: cachedSnapshotsKey)
         }
+    }
+
+    private func configureDemoMode() {
+        hasCompletedOnboarding = true
+        temperatureUnit = .fahrenheit
+        savedCities = WeatherSamples.demoSnapshots.dropFirst().map(\.cityName)
+        recentSearches = WeatherSamples.demoSnapshots.map(\.cityName)
+        cachedSnapshots = Dictionary(uniqueKeysWithValues: WeatherSamples.demoSnapshots.map { ($0.cityName, $0) })
+        applySnapshot(WeatherSamples.demoSnapshots[0], showingSavedOnly: false)
     }
 
     private static func decodeSnapshots(from data: Data?) -> [String: WeatherSnapshot] {

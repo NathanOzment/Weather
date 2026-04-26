@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23624" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LaunchScreenViewController">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23606"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="LaunchScreenViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchArtwork" translatesAutoresizingMaskIntoConstraints="NO" id="PkF-kh-1wd">
+                                <rect key="frame" x="56.5" y="255" width="280" height="342"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="280" id="q2O-M3-Urz"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="WeatherNow" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KiQ-Ft-w8z">
+                                <rect key="frame" x="89.5" y="627" width="214" height="43"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Live forecasts with a brighter point of view" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7q-9J-6kl">
+                                <rect key="frame" x="52" y="682" width="289" height="39"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="0.75" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" red="0.090196078431372548" green="0.15294117647058825" blue="0.28627450980392155" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="PkF-kh-1wd" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="196" id="5Kc-bP-pnM"/>
+                            <constraint firstItem="KiQ-Ft-w8z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="AkP-5G-lSK"/>
+                            <constraint firstItem="PkF-kh-1wd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="NTQ-HG-v9f"/>
+                            <constraint firstItem="PkF-kh-1wd" firstAttribute="height" secondItem="PkF-kh-1wd" secondAttribute="width" multiplier="1.22" id="Xoc-Nb-4q4"/>
+                            <constraint firstItem="G7q-9J-6kl" firstAttribute="top" secondItem="KiQ-Ft-w8z" secondAttribute="bottom" constant="12" id="h31-Nw-e6u"/>
+                            <constraint firstItem="KiQ-Ft-w8z" firstAttribute="top" secondItem="PkF-kh-1wd" secondAttribute="bottom" constant="30" id="vHA-G3-HDg"/>
+                            <constraint firstItem="G7q-9J-6kl" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="zld-2H-qsp"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9Xn-YW-vm6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="52.671755725190835" y="-3.5211267605633805"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="LaunchArtwork" width="1600" height="1600"/>
+    </resources>
+</document>

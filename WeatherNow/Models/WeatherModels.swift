@@ -154,9 +154,59 @@ enum WeatherCondition: String, Equatable, Codable {
 
 extension Coordinates {
     static let chicago = Coordinates(latitude: 41.8781, longitude: -87.6298)
+    static let austin = Coordinates(latitude: 30.2672, longitude: -97.7431)
+    static let seattle = Coordinates(latitude: 47.6062, longitude: -122.3321)
 }
 
 enum WeatherSamples {
+    static func makeSnapshot(
+        cityName: String,
+        coordinates: Coordinates,
+        temperature: Int,
+        condition: WeatherCondition,
+        low: Int,
+        high: Int,
+        precipitationBase: Int
+    ) -> WeatherSnapshot {
+        WeatherSnapshot(
+            cityName: cityName,
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+            updatedAt: .now,
+            current: CurrentConditions(
+                temperature: temperature,
+                apparentTemperature: temperature + (condition == .clear ? 1 : 0),
+                condition: condition,
+                windSpeed: max(8, precipitationBase / 2),
+                humidity: min(92, 48 + precipitationBase),
+                uvIndex: condition == .clear ? 7 : 4,
+                pressure: 1012 + (condition == .clear ? 4 : -2),
+                visibility: condition == .fog ? 4 : 10
+            ),
+            hourly: (0..<5).map { offset in
+                HourlyForecast(
+                    time: .now.addingTimeInterval(Double(offset) * 3600),
+                    temperature: temperature + (offset == 1 ? 1 : (offset >= 3 ? -1 : 0)),
+                    precipitationChance: min(95, precipitationBase + offset * 6),
+                    condition: offset >= 3 && condition == .clear ? .partlyCloudy : condition
+                )
+            },
+            daily: (0..<5).map { offset in
+                DailyForecast(
+                    date: .now.addingTimeInterval(Double(offset) * 86400),
+                    low: low + (offset == 2 ? -1 : 0),
+                    high: high + (offset == 1 ? 1 : 0),
+                    precipitationChance: min(95, precipitationBase + offset * 5),
+                    condition: offset == 1 && condition == .clear ? .partlyCloudy : condition,
+                    sunSchedule: SunSchedule(
+                        sunrise: Calendar.current.date(byAdding: .day, value: offset, to: Calendar.current.date(bySettingHour: 6, minute: 12 - min(offset, 4), second: 0, of: .now) ?? .now) ?? .now,
+                        sunset: Calendar.current.date(byAdding: .day, value: offset, to: Calendar.current.date(bySettingHour: 19, minute: 44 + min(offset, 4), second: 0, of: .now) ?? .now) ?? .now
+                    )
+                )
+            }
+        )
+    }
+
     static let snapshot = WeatherSnapshot(
         cityName: "Chicago",
         latitude: Coordinates.chicago.latitude,
@@ -187,4 +237,34 @@ enum WeatherSamples {
             DailyForecast(date: .now.addingTimeInterval(345600), low: 11, high: 18, precipitationChance: 16, condition: .clear, sunSchedule: SunSchedule(sunrise: Calendar.current.date(byAdding: .day, value: 4, to: Calendar.current.date(bySettingHour: 6, minute: 6, second: 0, of: .now) ?? .now) ?? .now, sunset: Calendar.current.date(byAdding: .day, value: 4, to: Calendar.current.date(bySettingHour: 19, minute: 48, second: 0, of: .now) ?? .now) ?? .now))
         ]
     )
+
+    static let demoSnapshots = [
+        makeSnapshot(
+            cityName: "Chicago",
+            coordinates: .chicago,
+            temperature: 20,
+            condition: .partlyCloudy,
+            low: 13,
+            high: 22,
+            precipitationBase: 20
+        ),
+        makeSnapshot(
+            cityName: "Austin",
+            coordinates: .austin,
+            temperature: 28,
+            condition: .clear,
+            low: 21,
+            high: 33,
+            precipitationBase: 8
+        ),
+        makeSnapshot(
+            cityName: "Seattle",
+            coordinates: .seattle,
+            temperature: 15,
+            condition: .rain,
+            low: 11,
+            high: 17,
+            precipitationBase: 58
+        )
+    ]
 }
