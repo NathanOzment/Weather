@@ -20,6 +20,7 @@ WeatherNow is a native SwiftUI weather app for iPhone with a polished forecast d
 - Saved-city comparison that highlights the warmest, driest, cleanest-air, and lowest-risk forecast at a glance.
 - City search with recent searches and live suggestion results.
 - A dedicated multi-layer map tab for comparing tracked cities by temperature, rain risk, air quality, and alerts.
+- A liquid-glass-inspired visual shell with native glass effects on supported iOS versions and polished fallbacks elsewhere.
 - Onboarding that can preload a starter city and preferred units.
 - A branded app icon and custom launch screen artwork.
 
@@ -57,6 +58,7 @@ No API key is required for the current version.
 - `Map` presents a radar-inspired comparison of the active city and saved locations with switchable weather layers.
 - `Saved` opens cached forecasts fast and refreshes them in the background.
 - `Saved` now compares your watchlist and points out the strongest city for the day.
+- `Liquid Glass` styling now carries through the app’s hero cards, chips, and actions on iOS 26+ with native SwiftUI APIs.
 - `Settings` handles units, refresh, onboarding reset, and saved-city cleanup.
 
 ## Next ideas

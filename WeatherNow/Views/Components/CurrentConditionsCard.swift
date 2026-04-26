@@ -7,6 +7,21 @@ struct CurrentConditionsCard: View {
     let onShowDetails: () -> Void
 
     var body: some View {
+        Group {
+            if #available(iOS 26, *) {
+                GlassEffectContainer(spacing: 18) {
+                    cardContent
+                }
+            } else {
+                cardContent
+            }
+        }
+        .foregroundStyle(.white)
+        .padding(24)
+        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+    }
+
+    private var cardContent: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
@@ -22,11 +37,17 @@ struct CurrentConditionsCard: View {
                 Image(systemName: snapshot.current.condition.sfSymbol)
                     .font(.system(size: 42))
                     .symbolRenderingMode(.multicolor)
+                    .padding(14)
+                    .weatherGlassChip(cornerRadius: 22, tint: Color.white.opacity(0.10))
             }
 
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 Text(displayTemperature(snapshot.current.temperature))
                     .font(.system(size: 88, weight: .semibold, design: .rounded))
+                Text("°")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.82))
+                    .padding(.bottom, 18)
             }
 
             HStack(spacing: 12) {
@@ -44,8 +65,8 @@ struct CurrentConditionsCard: View {
                         .font(.subheadline.weight(.semibold))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(Color.white.opacity(0.14), in: Capsule())
                 }
+                .weatherGlassButton(prominent: true)
 
                 Spacer()
 
@@ -56,17 +77,11 @@ struct CurrentConditionsCard: View {
                         .font(.subheadline.weight(.semibold))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(Color.white.opacity(0.14), in: Capsule())
                 }
+                .weatherGlassButton()
                 .foregroundStyle(.white)
             }
         }
-        .foregroundStyle(.white)
-        .padding(24)
-        .background(
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .fill(.ultraThinMaterial.opacity(0.78))
-        )
     }
 
     private func displayTemperature(_ celsius: Int) -> String {
@@ -82,5 +97,7 @@ struct CurrentConditionsCard: View {
                 .font(.headline.weight(.semibold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
     }
 }

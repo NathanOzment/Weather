@@ -11,7 +11,10 @@ struct BrandHeader: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(eyebrow.uppercased())
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.66))
+                    .foregroundStyle(.white.opacity(0.92))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .weatherGlassChip(cornerRadius: 16, tint: Color.white.opacity(0.12))
                 Text(title)
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
@@ -22,14 +25,10 @@ struct BrandHeader: View {
 
             Spacer()
 
-            ZStack {
-                Circle()
-                    .fill(Color.white.opacity(0.16))
-                    .frame(width: 58, height: 58)
-                Image(systemName: symbol)
-                    .font(.title2.weight(.semibold))
-                    .foregroundStyle(.white)
-            }
+            Image(systemName: symbol)
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(.white)
+                .weatherGlassOrb(size: 58, tint: Color.white.opacity(0.14))
         }
     }
 }

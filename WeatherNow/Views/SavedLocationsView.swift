@@ -39,8 +39,7 @@ struct SavedLocationsView: View {
                                     .font(.subheadline.weight(.semibold))
                                     .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.white.opacity(0.18))
+                            .weatherGlassButton(prominent: true)
                             .disabled(store.isRefreshingSavedCities)
 
                             CityComparisonSection(
@@ -90,7 +89,7 @@ struct SavedLocationsView: View {
                                     .buttonStyle(.plain)
                                 }
                                 .padding(18)
-                                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                                .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
                             }
                         }
                         .padding(20)

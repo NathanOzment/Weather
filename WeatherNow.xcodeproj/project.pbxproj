@@ -34,6 +34,7 @@
 		AA0000000000000000000125 /* AirQualitySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000226 /* AirQualitySection.swift */; };
 		AA0000000000000000000126 /* WeatherIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000227 /* WeatherIntents.swift */; };
 		AA0000000000000000000127 /* CityComparisonSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000228 /* CityComparisonSection.swift */; };
+		AA0000000000000000000128 /* LiquidGlassSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000229 /* LiquidGlassSupport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +66,7 @@
 		AA0000000000000000000226 /* AirQualitySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualitySection.swift; sourceTree = "<group>"; };
 		AA0000000000000000000227 /* WeatherIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherIntents.swift; sourceTree = "<group>"; };
 		AA0000000000000000000228 /* CityComparisonSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityComparisonSection.swift; sourceTree = "<group>"; };
+		AA0000000000000000000229 /* LiquidGlassSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlassSupport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 				AA0000000000000000000215 /* DailyForecastSection.swift */,
 				AA0000000000000000000225 /* ForecastPlannerSection.swift */,
 				AA0000000000000000000214 /* HourlyForecastSection.swift */,
+				AA0000000000000000000229 /* LiquidGlassSupport.swift */,
 				AA0000000000000000000216 /* SavedCitiesSection.swift */,
 				AA0000000000000000000220 /* SunScheduleCard.swift */,
 				AA0000000000000000000219 /* TemperatureTrendSection.swift */,
@@ -240,6 +243,7 @@
 				AA0000000000000000000124 /* ForecastPlannerSection.swift in Sources */,
 				AA0000000000000000000107 /* HomeView.swift in Sources */,
 				AA0000000000000000000114 /* HourlyForecastSection.swift in Sources */,
+				AA0000000000000000000128 /* LiquidGlassSupport.swift in Sources */,
 				AA0000000000000000000105 /* LocationService.swift in Sources */,
 				AA0000000000000000000108 /* OnboardingView.swift in Sources */,
 				AA0000000000000000000116 /* SavedCitiesSection.swift in Sources */,

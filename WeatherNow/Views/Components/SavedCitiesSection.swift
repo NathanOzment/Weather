@@ -18,7 +18,7 @@ struct SavedCitiesSection: View {
                     .foregroundStyle(.white.opacity(0.74))
                     .padding(16)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .weatherGlassCard(cornerRadius: 22, tint: Color.white.opacity(0.08))
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
@@ -43,9 +43,10 @@ struct SavedCitiesSection: View {
                                 }
                                 .padding(.trailing, 12)
                             }
-                            .background(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .fill(activeCity == city ? Color.white.opacity(0.22) : Color.white.opacity(0.12))
+                            .weatherGlassChip(
+                                cornerRadius: 18,
+                                tint: activeCity == city ? Color.white.opacity(0.18) : Color.white.opacity(0.08),
+                                interactive: true
                             )
                         }
                     }
