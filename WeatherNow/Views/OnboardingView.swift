@@ -6,6 +6,7 @@ struct OnboardingView: View {
     @State private var selectedUnit: TemperatureUnit = .fahrenheit
     @State private var selectedStarterCity = "Chicago"
     @State private var isFinishing = false
+    @Namespace private var glassNamespace
 
     private let starterCities = ["Chicago", "New York", "San Francisco", "Austin"]
 
@@ -72,6 +73,8 @@ struct OnboardingView: View {
 
             if page == pages.count - 1 {
                 setupControls
+                    .onboardingGlassTransition(id: "setup-controls", namespace: glassNamespace)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
             HStack(spacing: 10) {
@@ -85,25 +88,21 @@ struct OnboardingView: View {
             .padding(.vertical, 10)
             .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
 
-            Button {
-                if page == pages.count - 1 {
+            if page == pages.count - 1 {
+                primaryActionButton(title: buttonTitle) {
                     Task {
                         await finishOnboarding()
                     }
-                } else {
+                }
+                .onboardingGlassTransition(id: "primary-action-final", namespace: glassNamespace)
+            } else {
+                primaryActionButton(title: buttonTitle) {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.88)) {
                         page += 1
                     }
                 }
-            } label: {
-                Text(buttonTitle)
-                    .font(.headline.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 18)
+                .onboardingGlassTransition(id: "primary-action-next", namespace: glassNamespace)
             }
-            .foregroundStyle(.white)
-            .weatherGlassButton(prominent: true)
-            .disabled(isFinishing)
         }
     }
 
@@ -196,6 +195,18 @@ struct OnboardingView: View {
         .weatherGlassCard(cornerRadius: 26, tint: Color.white.opacity(0.08))
     }
 
+    private func primaryActionButton(title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.headline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 18)
+        }
+        .foregroundStyle(.white)
+        .weatherGlassButton(prominent: true)
+        .disabled(isFinishing)
+    }
+
     private func finishOnboarding() async {
         guard !isFinishing else { return }
         isFinishing = true
@@ -209,4 +220,16 @@ private struct OnboardingPage {
     let subtitle: String
     let symbol: String
     let colors: [Color]
+}
+
+private extension View {
+    @ViewBuilder
+    func onboardingGlassTransition(id: String, namespace: Namespace.ID) -> some View {
+        if #available(iOS 26, *) {
+            glassEffectID(id, in: namespace)
+                .glassEffectTransition(.matchedGeometry)
+        } else {
+            self
+        }
+    }
 }

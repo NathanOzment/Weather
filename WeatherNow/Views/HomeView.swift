@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var store: WeatherStore
     @State private var showingDetails = false
+    @Namespace private var glassNamespace
 
     var body: some View {
         NavigationStack {
@@ -17,11 +18,7 @@ struct HomeView: View {
                             subtitle: store.snapshot?.freshnessText ?? "Search for a city or use your location",
                             symbol: store.snapshot?.current.condition.sfSymbol ?? "cloud.sun.fill"
                         )
-                        if let statusMessage = store.statusMessage {
-                            statusBanner(statusMessage)
-                        }
-                        searchBar
-                        preferencesBar
+                        glassControlCluster
 
                         if let snapshot = store.snapshot {
                             CurrentConditionsCard(
@@ -120,6 +117,32 @@ struct HomeView: View {
             Text(store.errorMessage ?? "")
         })
     }
+
+    @ViewBuilder
+    private var glassControlCluster: some View {
+        if #available(iOS 26, *) {
+            GlassEffectContainer(spacing: 18) {
+                VStack(alignment: .leading, spacing: 18) {
+                    if let statusMessage = store.statusMessage {
+                        statusBanner(statusMessage)
+                            .glassEffectID("status-banner", in: glassNamespace)
+                            .glassEffectTransition(.materialize)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    searchBar
+                        .glassEffectID("search-bar", in: glassNamespace)
+                    preferencesBar
+                        .glassEffectID("preferences-bar", in: glassNamespace)
+                }
+            }
+        } else {
+            if let statusMessage = store.statusMessage {
+                statusBanner(statusMessage)
+            }
+            searchBar
+            preferencesBar
+        }
+    }
     private var searchBar: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
@@ -152,8 +175,16 @@ struct HomeView: View {
         .weatherGlassCard(cornerRadius: 20, tint: Color.white.opacity(0.08))
         .overlay(alignment: .bottom) {
             if !store.suggestions.isEmpty {
-                suggestionList
-                    .padding(.top, 66)
+                if #available(iOS 26, *) {
+                    suggestionList
+                        .padding(.top, 66)
+                        .glassEffectID("suggestions", in: glassNamespace)
+                        .glassEffectTransition(.materialize)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                } else {
+                    suggestionList
+                        .padding(.top, 66)
+                }
             }
         }
     }
