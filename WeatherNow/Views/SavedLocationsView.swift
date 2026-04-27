@@ -93,7 +93,10 @@ struct SavedLocationsView: View {
                             }
                         }
                         .padding(20)
-                        .padding(.bottom, 120)
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        Color.clear
+                            .frame(height: 96)
                     }
                 }
             }

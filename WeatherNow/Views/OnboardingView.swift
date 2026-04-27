@@ -9,6 +9,10 @@ struct OnboardingView: View {
     @Namespace private var glassNamespace
 
     private let starterCities = ["Chicago", "New York", "San Francisco", "Austin"]
+    private let starterCityColumns = [
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
+    ]
 
     private let pages: [OnboardingPage] = [
         OnboardingPage(
@@ -53,7 +57,9 @@ struct OnboardingView: View {
     }
 
     private var onboardingContent: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        let isFinalPage = page == pages.count - 1
+
+        return VStack(alignment: .leading, spacing: isFinalPage ? 18 : 24) {
             HStack {
                 Text("WeatherNow")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -70,7 +76,7 @@ struct OnboardingView: View {
                 .weatherGlassButton()
             }
 
-            Spacer()
+            Spacer(minLength: isFinalPage ? 0 : 24)
 
             card(for: pages[page])
 
@@ -129,29 +135,31 @@ struct OnboardingView: View {
     }
 
     private func card(for page: OnboardingPage) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
+        let isFinalPage = self.page == pages.count - 1
+
+        return VStack(alignment: .leading, spacing: 20) {
             ZStack {
                 RoundedRectangle(cornerRadius: 30, style: .continuous)
                     .fill(
                         LinearGradient(colors: page.colors, startPoint: .topLeading, endPoint: .bottomTrailing)
                     )
-                    .frame(height: 240)
+                    .frame(height: isFinalPage ? 152 : 240)
 
                 Image(systemName: page.symbol)
-                    .font(.system(size: 78))
+                    .font(.system(size: isFinalPage ? 52 : 78))
                     .foregroundStyle(.white)
             }
 
             Text(page.title)
-                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .font(.system(size: isFinalPage ? 24 : 32, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
             Text(page.subtitle)
-                .font(.title3)
+                .font(isFinalPage ? .subheadline : .title3)
                 .foregroundStyle(.white.opacity(0.82))
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(24)
+        .padding(isFinalPage ? 18 : 24)
         .weatherGlassCard(cornerRadius: 34, tint: Color.white.opacity(0.08))
     }
 
@@ -173,13 +181,14 @@ struct OnboardingView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.86))
 
-                HStack(spacing: 10) {
+                LazyVGrid(columns: starterCityColumns, spacing: 10) {
                     ForEach(starterCities, id: \.self) { city in
                         Button {
                             selectedStarterCity = city
                         } label: {
                             Text(city)
                                 .font(.caption.weight(.semibold))
+                                .frame(maxWidth: .infinity)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 10)
                                 .foregroundStyle(.white)
@@ -194,7 +203,7 @@ struct OnboardingView: View {
                 }
             }
         }
-        .padding(20)
+        .padding(16)
         .weatherGlassCard(cornerRadius: 26, tint: Color.white.opacity(0.08))
     }
 
