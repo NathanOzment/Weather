@@ -3,6 +3,7 @@ import SwiftUI
 struct SavedLocationsView: View {
     @ObservedObject var store: WeatherStore
     @State private var detailSnapshot: WeatherSnapshot?
+    @State private var openingCityName: String?
 
     var body: some View {
         NavigationStack {
@@ -30,6 +31,10 @@ struct SavedLocationsView: View {
                                 symbol: "star.circle.fill"
                             )
 
+                            if store.isRefreshingSavedCities {
+                                loadingBanner("Updating saved forecasts...")
+                            }
+
                             Button {
                                 Task {
                                     await store.refreshSavedCities()
@@ -52,8 +57,10 @@ struct SavedLocationsView: View {
                                     Button {
                                         detailSnapshot = store.cachedSnapshot(for: city)
                                         Task {
+                                            openingCityName = city
                                             await store.loadSavedCity(city)
                                             detailSnapshot = store.snapshot
+                                            openingCityName = nil
                                         }
                                     } label: {
                                         HStack(spacing: 14) {
@@ -72,12 +79,18 @@ struct SavedLocationsView: View {
 
                                             Spacer()
 
-                                            Image(systemName: "chevron.right")
-                                                .foregroundStyle(.white.opacity(0.58))
+                                            if openingCityName == city {
+                                                ProgressView()
+                                                    .tint(.white)
+                                            } else {
+                                                Image(systemName: "chevron.right")
+                                                    .foregroundStyle(.white.opacity(0.58))
+                                            }
                                         }
                                         .foregroundStyle(.white)
                                     }
                                     .buttonStyle(.plain)
+                                    .disabled(openingCityName != nil)
 
                                     Button {
                                         store.removeSavedCity(city)
@@ -87,6 +100,7 @@ struct SavedLocationsView: View {
                                             .frame(width: 34, height: 34)
                                     }
                                     .buttonStyle(.plain)
+                                    .disabled(openingCityName != nil || store.isRefreshingSavedCities)
                                 }
                                 .padding(18)
                                 .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
@@ -112,6 +126,21 @@ struct SavedLocationsView: View {
             .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
+    }
+
+    private func loadingBanner(_ message: String) -> some View {
+        HStack(spacing: 12) {
+            ProgressView()
+                .tint(.white)
+
+            Text(message)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white)
+
+            Spacer()
+        }
+        .padding(14)
+        .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.10))
     }
 }
 

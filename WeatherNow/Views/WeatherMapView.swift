@@ -43,6 +43,10 @@ struct WeatherMapView: View {
                             symbol: "map.fill"
                         )
 
+                        if let loadingMessage = store.loadingMessage {
+                            loadingBanner(loadingMessage)
+                        }
+
                         mapCard
 
                         if let selectedPoint {
@@ -94,11 +98,20 @@ struct WeatherMapView: View {
                 Button {
                     updateMapPosition()
                 } label: {
-                    Label("Recenter", systemImage: "scope")
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 10)
+                    HStack(spacing: 8) {
+                        if store.isRefreshingCurrentLocation {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Image(systemName: "scope")
+                        }
+                        Text("Recenter")
+                            .font(.caption.weight(.semibold))
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
                 }
+                .disabled(store.isRefreshingCurrentLocation)
                 .weatherGlassButton(prominent: true)
             }
 
@@ -206,13 +219,21 @@ struct WeatherMapView: View {
                     await store.loadSavedCity(point.cityName)
                 }
             } label: {
-                Label(point.isActive ? "Viewing This City" : "Open Forecast", systemImage: point.isActive ? "checkmark.circle.fill" : "arrow.up.right.circle.fill")
-                    .font(.subheadline.weight(.semibold))
-                    .padding(.vertical, 10)
-                    .frame(maxWidth: .infinity)
+                HStack(spacing: 8) {
+                    if store.cityLoadingName == point.cityName {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Image(systemName: point.isActive ? "checkmark.circle.fill" : "arrow.up.right.circle.fill")
+                    }
+                    Text(point.isActive ? "Viewing This City" : "Open Forecast")
+                        .font(.subheadline.weight(.semibold))
+                }
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity)
             }
             .weatherGlassButton(prominent: !point.isActive)
-            .disabled(point.isActive)
+            .disabled(point.isActive || store.isLoading)
         }
         .padding(20)
         .weatherGlassCard(cornerRadius: 28, tint: point.tintColor(for: layerMode).opacity(0.12))
@@ -270,6 +291,21 @@ struct WeatherMapView: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
         .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+    }
+
+    private func loadingBanner(_ message: String) -> some View {
+        HStack(spacing: 12) {
+            ProgressView()
+                .tint(.white)
+
+            Text(message)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white)
+
+            Spacer()
+        }
+        .padding(14)
+        .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.10))
     }
 
     private func updateMapPosition() {

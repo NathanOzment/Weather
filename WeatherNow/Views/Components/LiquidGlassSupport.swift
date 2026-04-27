@@ -79,4 +79,46 @@ extension View {
     func weatherGlassButton(prominent: Bool = false) -> some View {
         modifier(WeatherGlassButtonStyleModifier(prominent: prominent))
     }
+
+    func weatherLoadingSheen(active: Bool = true) -> some View {
+        modifier(WeatherLoadingSheenModifier(active: active))
+    }
+}
+
+private struct WeatherLoadingSheenModifier: ViewModifier {
+    let active: Bool
+    @State private var phase: CGFloat = -1.1
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                if active {
+                    GeometryReader { geometry in
+                        LinearGradient(
+                            colors: [
+                                .clear,
+                                Color.white.opacity(0.10),
+                                Color.white.opacity(0.32),
+                                Color.white.opacity(0.10),
+                                .clear
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(width: max(geometry.size.width * 0.45, 96))
+                        .rotationEffect(.degrees(18))
+                        .offset(x: geometry.size.width * phase)
+                        .blendMode(.screen)
+                    }
+                    .mask(content)
+                    .allowsHitTesting(false)
+                    .onAppear {
+                        phase = -1.1
+                        withAnimation(.linear(duration: 1.35).repeatForever(autoreverses: false)) {
+                            phase = 1.2
+                        }
+                    }
+                }
+            }
+    }
 }

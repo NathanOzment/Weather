@@ -354,6 +354,7 @@ private struct ForecastLoadingSkeleton: View {
             dailyRow
         }
         .redacted(reason: .placeholder)
+        .weatherLoadingSheen()
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
