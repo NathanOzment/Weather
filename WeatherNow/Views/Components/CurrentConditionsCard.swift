@@ -3,6 +3,7 @@ import SwiftUI
 struct CurrentConditionsCard: View {
     let snapshot: WeatherSnapshot
     let temperatureUnit: TemperatureUnit
+    let isRefreshing: Bool
     let onSaveCity: () -> Void
     let onShowDetails: () -> Void
 
@@ -27,9 +28,25 @@ struct CurrentConditionsCard: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(snapshot.cityName)
                         .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .contentTransition(.interpolate)
                     Text(snapshot.current.condition.title)
                         .font(.title3.weight(.medium))
                         .foregroundStyle(.white.opacity(0.82))
+                        .contentTransition(.interpolate)
+
+                    if isRefreshing {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .tint(.white)
+                            Text("Refreshing")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.9))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .weatherGlassChip(cornerRadius: 16, tint: Color.white.opacity(0.10))
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
                 }
 
                 Spacer()
@@ -44,6 +61,7 @@ struct CurrentConditionsCard: View {
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 Text(displayTemperature(snapshot.current.temperature))
                     .font(.system(size: 88, weight: .semibold, design: .rounded))
+                    .contentTransition(.numericText())
                 Text("°")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.82))
@@ -99,5 +117,6 @@ struct CurrentConditionsCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+        .contentTransition(.interpolate)
     }
 }

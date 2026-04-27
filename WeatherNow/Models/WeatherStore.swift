@@ -1,6 +1,11 @@
 import Combine
 import Foundation
 
+enum WeatherLoadContext: Equatable {
+    case currentLocation
+    case citySearch(String)
+}
+
 @MainActor
 final class WeatherStore: ObservableObject {
     @Published var snapshot: WeatherSnapshot?
@@ -19,9 +24,40 @@ final class WeatherStore: ObservableObject {
     @Published var selectedTab: AppTab
     @Published var temperatureUnit: TemperatureUnit
     @Published var showingSavedOnly = false
+    @Published private(set) var loadContext: WeatherLoadContext?
 
     var activeCityName: String? {
         snapshot?.cityName
+    }
+
+    var isRefreshingSnapshot: Bool {
+        isLoading && snapshot != nil
+    }
+
+    var isRefreshingCurrentLocation: Bool {
+        isLoading && loadContext == .currentLocation
+    }
+
+    var isFetchingCityForecast: Bool {
+        isLoading && cityLoadingName != nil
+    }
+
+    var cityLoadingName: String? {
+        guard case let .citySearch(city)? = loadContext else { return nil }
+        return city
+    }
+
+    var loadingMessage: String? {
+        guard isRefreshingSnapshot else { return nil }
+
+        switch loadContext {
+        case .currentLocation:
+            return "Refreshing local conditions..."
+        case let .citySearch(city):
+            return "Loading \(city)'s latest forecast..."
+        case nil:
+            return nil
+        }
     }
 
     var mapSnapshots: [WeatherSnapshot] {
@@ -103,12 +139,7 @@ final class WeatherStore: ObservableObject {
     }
 
     func refresh() async {
-        isLoading = true
-        errorMessage = nil
-        statusMessage = nil
-        isShowingCachedWeather = false
-        suggestions = []
-        suggestionTask?.cancel()
+        beginLoading(.currentLocation)
 
         do {
             let coordinates = try await locationService.requestCurrentLocation()
@@ -127,19 +158,14 @@ final class WeatherStore: ObservableObject {
             }
         }
 
-        isLoading = false
+        finishLoading()
     }
 
     func searchCity() async {
         let trimmedQuery = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuery.isEmpty else { return }
 
-        isLoading = true
-        errorMessage = nil
-        statusMessage = nil
-        isShowingCachedWeather = false
-        suggestions = []
-        suggestionTask?.cancel()
+        beginLoading(.citySearch(trimmedQuery))
 
         do {
             let coordinates = try await weatherService.geocode(city: trimmedQuery)
@@ -156,16 +182,11 @@ final class WeatherStore: ObservableObject {
             }
         }
 
-        isLoading = false
+        finishLoading()
     }
 
     func selectSuggestion(_ suggestion: CitySuggestion) async {
-        isLoading = true
-        errorMessage = nil
-        statusMessage = nil
-        isShowingCachedWeather = false
-        suggestions = []
-        suggestionTask?.cancel()
+        beginLoading(.citySearch(suggestion.name))
 
         do {
             let weather = try await weatherService.fetchWeather(for: suggestion.coordinates, preferredName: suggestion.name)
@@ -181,7 +202,7 @@ final class WeatherStore: ObservableObject {
             }
         }
 
-        isLoading = false
+        finishLoading()
     }
 
     func loadSavedCity(_ city: String) async {
@@ -389,6 +410,21 @@ final class WeatherStore: ObservableObject {
         recentSearches.insert(city, at: 0)
         recentSearches = Array(recentSearches.prefix(8))
         persistRecentSearches()
+    }
+
+    private func beginLoading(_ context: WeatherLoadContext) {
+        loadContext = context
+        isLoading = true
+        errorMessage = nil
+        statusMessage = nil
+        isShowingCachedWeather = false
+        suggestions = []
+        suggestionTask?.cancel()
+    }
+
+    private func finishLoading() {
+        isLoading = false
+        loadContext = nil
     }
 
     private func merge(localMatches: [String], remote: [CitySuggestion]) -> [CitySuggestion] {

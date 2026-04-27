@@ -25,9 +25,11 @@ struct HomeView: View {
                             CurrentConditionsCard(
                                 snapshot: snapshot,
                                 temperatureUnit: store.temperatureUnit,
+                                isRefreshing: store.isRefreshingSnapshot,
                                 onSaveCity: { store.addCurrentCityToSaved() },
                                 onShowDetails: { showingDetails = true }
                             )
+                            .animation(.spring(response: 0.4, dampingFraction: 0.84), value: store.isRefreshingSnapshot)
                             WeatherAlertsSection(snapshot: snapshot)
                             SavedCitiesSection(
                                 savedCities: store.savedCities,
@@ -47,10 +49,7 @@ struct HomeView: View {
                             HourlyForecastSection(hourly: snapshot.hourly, temperatureUnit: store.temperatureUnit)
                             DailyForecastSection(daily: snapshot.daily, temperatureUnit: store.temperatureUnit)
                         } else if store.isLoading {
-                            ProgressView("Loading forecast...")
-                                .frame(maxWidth: .infinity, minHeight: 260)
-                                .tint(.white)
-                                .foregroundStyle(.white)
+                            ForecastLoadingSkeleton()
                         } else {
                             ContentUnavailableView(
                                 "Forecast unavailable",
@@ -124,7 +123,12 @@ struct HomeView: View {
         if #available(iOS 26, *) {
             GlassEffectContainer(spacing: 18) {
                 VStack(alignment: .leading, spacing: 18) {
-                    if let statusMessage = store.statusMessage {
+                    if let loadingMessage = store.loadingMessage {
+                        loadingBanner(loadingMessage)
+                            .glassEffectID("loading-banner", in: glassNamespace)
+                            .glassEffectTransition(.materialize)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    } else if let statusMessage = store.statusMessage {
                         statusBanner(statusMessage)
                             .glassEffectID("status-banner", in: glassNamespace)
                             .glassEffectTransition(.materialize)
@@ -137,7 +141,9 @@ struct HomeView: View {
                 }
             }
         } else {
-            if let statusMessage = store.statusMessage {
+            if let loadingMessage = store.loadingMessage {
+                loadingBanner(loadingMessage)
+            } else if let statusMessage = store.statusMessage {
                 statusBanner(statusMessage)
             }
             searchBar
@@ -154,6 +160,7 @@ struct HomeView: View {
                 .autocorrectionDisabled()
                 .submitLabel(.search)
                 .foregroundStyle(.white)
+                .disabled(store.isLoading)
                 .onChange(of: store.searchQuery) { _, _ in
                     guard isSearchFocused else { return }
                     store.refreshSuggestions()
@@ -166,14 +173,24 @@ struct HomeView: View {
                 }
                 .focused($isSearchFocused)
 
-            Button("Go") {
+            Button {
                 isSearchFocused = false
                 Task {
                     await store.searchCity()
                 }
+            } label: {
+                Group {
+                    if store.isFetchingCityForecast {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Text("Go")
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .disabled(store.isLoading)
             .weatherGlassButton(prominent: true)
         }
         .padding(14)
@@ -251,14 +268,41 @@ struct HomeView: View {
                     await store.refresh()
                 }
             } label: {
-                Label("Local", systemImage: "location.fill")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
+                HStack(spacing: 8) {
+                    if store.isRefreshingCurrentLocation {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Image(systemName: "location.fill")
+                    }
+                    Text("Local")
+                        .font(.subheadline.weight(.semibold))
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
             }
+            .disabled(store.isLoading)
             .weatherGlassButton()
         }
+    }
+
+    private func loadingBanner(_ message: String) -> some View {
+        HStack(spacing: 12) {
+            ProgressView()
+                .tint(.white)
+
+            Text(message)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white)
+
+            Spacer()
+        }
+        .padding(14)
+        .weatherGlassCard(
+            cornerRadius: 18,
+            tint: Color.white.opacity(0.10)
+        )
     }
 
     private func statusBanner(_ message: String) -> some View {
@@ -296,5 +340,105 @@ struct HomeView: View {
         case .fog:
             [Color(red: 0.24, green: 0.27, blue: 0.33), Color(red: 0.46, green: 0.50, blue: 0.56), Color(red: 0.72, green: 0.76, blue: 0.80)]
         }
+    }
+}
+
+private struct ForecastLoadingSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            headerBlock
+            controlCluster
+            mainCard
+            metricRow
+            metricRow
+            dailyRow
+        }
+        .redacted(reason: .placeholder)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    private var headerBlock: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            skeletonLine(width: 138, height: 18)
+            skeletonLine(width: 220, height: 42)
+            skeletonLine(width: 164, height: 20)
+        }
+    }
+
+    private var controlCluster: some View {
+        VStack(spacing: 14) {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color.white.opacity(0.16))
+                .frame(height: 64)
+                .weatherGlassCard(cornerRadius: 20, tint: Color.white.opacity(0.08))
+
+            HStack(spacing: 14) {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.white.opacity(0.16))
+                    .frame(height: 50)
+                    .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.08))
+
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.white.opacity(0.16))
+                    .frame(width: 124, height: 50)
+                    .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.08))
+            }
+        }
+    }
+
+    private var mainCard: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 10) {
+                    skeletonLine(width: 180, height: 34)
+                    skeletonLine(width: 124, height: 20)
+                }
+                Spacer()
+                Circle()
+                    .fill(Color.white.opacity(0.16))
+                    .frame(width: 70, height: 70)
+            }
+
+            skeletonLine(width: 188, height: 88)
+
+            HStack(spacing: 12) {
+                ForEach(0..<4, id: \.self) { _ in
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(Color.white.opacity(0.16))
+                        .frame(height: 72)
+                }
+            }
+        }
+        .padding(24)
+        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+    }
+
+    private var metricRow: some View {
+        HStack(spacing: 12) {
+            ForEach(0..<3, id: \.self) { _ in
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(Color.white.opacity(0.16))
+                    .frame(height: 92)
+                    .weatherGlassCard(cornerRadius: 22, tint: Color.white.opacity(0.08))
+            }
+        }
+    }
+
+    private var dailyRow: some View {
+        VStack(spacing: 12) {
+            ForEach(0..<4, id: \.self) { _ in
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(Color.white.opacity(0.16))
+                    .frame(height: 62)
+                    .weatherGlassCard(cornerRadius: 22, tint: Color.white.opacity(0.08))
+            }
+        }
+    }
+
+    private func skeletonLine(width: CGFloat, height: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: min(height / 2, 18), style: .continuous)
+            .fill(Color.white.opacity(0.16))
+            .frame(width: width, height: height)
     }
 }
