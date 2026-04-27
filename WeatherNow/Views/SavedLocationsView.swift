@@ -22,17 +22,10 @@ struct SavedLocationsView: View {
                     )
                     .foregroundStyle(.white)
                     .padding(24)
-                    .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+                    .weatherGlassCard(cornerRadius: 30)
                 } else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 14) {
-                            BrandHeader(
-                                eyebrow: "Watchlist",
-                                title: "Your Cities",
-                                subtitle: store.isRefreshingSavedCities ? "Refreshing your saved forecasts now" : "\(store.savedCities.count) saved forecasts ready to reopen",
-                                symbol: "star.circle.fill"
-                            )
-
                             if store.isRefreshingSavedCities {
                                 loadingBanner("Updating saved forecasts...")
                             }
@@ -105,18 +98,20 @@ struct SavedLocationsView: View {
                                     .disabled(openingCityName != nil || store.isRefreshingSavedCities)
                                 }
                                 .padding(18)
-                                .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
+                                .weatherGlassCard(cornerRadius: 24)
                             }
                         }
                         .padding(20)
                     }
                     .safeAreaInset(edge: .bottom) {
                         Color.clear
-                            .frame(height: 96)
+                            .frame(height: 20)
                     }
                 }
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationTitle("Saved Cities")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
         .sheet(item: Binding(
             get: { detailSnapshot.map(IdentifiedSnapshot.init) },
@@ -142,7 +137,7 @@ struct SavedLocationsView: View {
             Spacer()
         }
         .padding(14)
-        .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.10))
+        .weatherGlassCard(cornerRadius: 18)
     }
 }
 

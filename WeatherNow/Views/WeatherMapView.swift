@@ -36,13 +36,6 @@ struct WeatherMapView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        BrandHeader(
-                            eyebrow: "Radar View",
-                            title: "Live Weather Map",
-                            subtitle: "Switch between temperature, rain risk, air quality, and alerts across your tracked cities",
-                            symbol: "map.fill"
-                        )
-
                         if let loadingMessage = store.loadingMessage {
                             loadingBanner(loadingMessage)
                         }
@@ -60,7 +53,9 @@ struct WeatherMapView: View {
                     .padding(.bottom, 32)
                 }
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationTitle("Weather Map")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
         .task {
             await store.load()
@@ -121,7 +116,7 @@ struct WeatherMapView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .weatherGlassSegmentedControl(cornerRadius: 24, tint: Color.white.opacity(0.10))
+            .weatherGlassSegmentedControl(cornerRadius: 24)
 
             Map(position: $position) {
                 ForEach(points) { point in
@@ -145,7 +140,7 @@ struct WeatherMapView: View {
             layerLegend
         }
         .padding(18)
-        .weatherGlassCard(cornerRadius: 30, tint: WeatherGlassPalette.cool.opacity(0.14))
+        .weatherGlassCard(cornerRadius: 30)
     }
 
     private var layerLegend: some View {
@@ -306,7 +301,7 @@ struct WeatherMapView: View {
             Spacer()
         }
         .padding(14)
-        .weatherGlassCard(cornerRadius: 18, tint: WeatherGlassPalette.slate.opacity(0.16))
+        .weatherGlassCard(cornerRadius: 18)
     }
 
     private func updateMapPosition() {

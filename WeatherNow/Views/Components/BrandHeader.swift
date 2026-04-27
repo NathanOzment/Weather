@@ -14,7 +14,7 @@ struct BrandHeader: View {
                     .foregroundStyle(.white.opacity(0.92))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .weatherGlassChip(cornerRadius: 16, tint: Color.white.opacity(0.12))
+                    .weatherGlassChip(cornerRadius: 16)
                 Text(title)
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
@@ -28,7 +28,7 @@ struct BrandHeader: View {
             Image(systemName: symbol)
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(.white)
-                .weatherGlassOrb(size: 58, tint: Color.white.opacity(0.14))
+                .weatherGlassOrb(size: 58)
         }
     }
 }

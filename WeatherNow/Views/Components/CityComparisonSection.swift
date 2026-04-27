@@ -33,7 +33,7 @@ struct CityComparisonSection: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
-                            .weatherGlassChip(cornerRadius: 22, tint: Color.white.opacity(0.10))
+                            .weatherGlassChip(cornerRadius: 22)
                     }
 
                     HStack(spacing: 12) {
@@ -74,7 +74,7 @@ struct CityComparisonSection: View {
                 }
             }
             .padding(18)
-            .weatherGlassCard(cornerRadius: 28, tint: WeatherGlassPalette.cool.opacity(0.14))
+            .weatherGlassCard(cornerRadius: 28)
         }
     }
 
@@ -101,7 +101,7 @@ struct CityComparisonSection: View {
         }
         .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
         .padding(18)
-        .weatherGlassCard(cornerRadius: 24, tint: tint.opacity(0.12))
+        .weatherGlassCard(cornerRadius: 24, tint: tint.opacity(0.08))
     }
 }
 

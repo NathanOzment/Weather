@@ -14,13 +14,6 @@ struct SettingsView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 18) {
-                        BrandHeader(
-                            eyebrow: "Preferences",
-                            title: "Settings",
-                            subtitle: "Tune units, onboarding, and your saved experience",
-                            symbol: "slider.horizontal.3"
-                        )
-
                         settingsCard {
                             Text("Units")
                                 .font(.headline.weight(.semibold))
@@ -35,7 +28,7 @@ struct SettingsView: View {
                                 }
                             }
                             .pickerStyle(.segmented)
-                            .weatherGlassSegmentedControl(cornerRadius: 22, tint: Color.white.opacity(0.10))
+                            .weatherGlassSegmentedControl(cornerRadius: 22)
                         }
 
                         settingsCard {
@@ -91,7 +84,9 @@ struct SettingsView: View {
                     .padding(20)
                 }
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 
@@ -100,6 +95,6 @@ struct SettingsView: View {
             content()
         }
         .padding(18)
-        .weatherGlassCard(cornerRadius: 26, tint: WeatherGlassPalette.cool.opacity(0.14))
+        .weatherGlassCard(cornerRadius: 26)
     }
 }

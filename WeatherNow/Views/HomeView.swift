@@ -13,12 +13,6 @@ struct HomeView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        BrandHeader(
-                            eyebrow: "Right Now",
-                            title: store.lastResolvedLocation,
-                            subtitle: store.snapshot?.freshnessText ?? "Search for a city or use your location",
-                            symbol: store.snapshot?.current.condition.sfSymbol ?? "cloud.sun.fill"
-                        )
                         glassControlCluster
 
                         if let snapshot = store.snapshot {
@@ -58,26 +52,24 @@ struct HomeView: View {
                             )
                             .foregroundStyle(.white)
                             .padding(24)
-                            .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+                            .weatherGlassCard(cornerRadius: 30)
                         }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.top, 16)
-                    .padding(.bottom, 32)
+                    .padding(.top, 12)
+                    .padding(.bottom, 40)
                 }
                 .refreshable {
                     await store.refresh()
                 }
             }
+            .navigationTitle(store.lastResolvedLocation)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    EmptyView()
-                }
-
                 ToolbarItem(placement: .topBarTrailing) {
                     if store.isLoading {
                         ProgressView()
-                            .tint(.white)
                     } else {
                         Button {
                             Task {
@@ -85,12 +77,10 @@ struct HomeView: View {
                             }
                         } label: {
                             Image(systemName: "arrow.clockwise")
-                                .foregroundStyle(.white)
                         }
                     }
                 }
             }
-            .toolbar(.hidden, for: .navigationBar)
         }
         .sheet(isPresented: $showingDetails) {
             if let snapshot = store.snapshot {
@@ -196,7 +186,7 @@ struct HomeView: View {
             .weatherGlassButton(prominent: true)
         }
         .padding(14)
-        .weatherGlassCard(cornerRadius: 20, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 20)
         .onChange(of: isSearchFocused) { _, isFocused in
             if !isFocused {
                 store.suggestions = []
@@ -248,7 +238,7 @@ struct HomeView: View {
                 }
             }
         }
-        .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 18)
         .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
     }
 
@@ -263,7 +253,7 @@ struct HomeView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .weatherGlassSegmentedControl(cornerRadius: 22, tint: Color.white.opacity(0.10))
+            .weatherGlassSegmentedControl(cornerRadius: 22)
 
             Button {
                 isSearchFocused = false
@@ -302,10 +292,7 @@ struct HomeView: View {
             Spacer()
         }
         .padding(14)
-        .weatherGlassCard(
-            cornerRadius: 18,
-            tint: Color.white.opacity(0.10)
-        )
+        .weatherGlassCard(cornerRadius: 18)
     }
 
     private func statusBanner(_ message: String) -> some View {
@@ -320,10 +307,7 @@ struct HomeView: View {
             Spacer()
         }
         .padding(14)
-        .weatherGlassCard(
-            cornerRadius: 18,
-            tint: store.isShowingCachedWeather ? Color(red: 0.33, green: 0.26, blue: 0.10).opacity(0.32) : Color.white.opacity(0.08)
-        )
+        .weatherGlassCard(cornerRadius: 18)
     }
 
     private func gradientColors(for condition: WeatherCondition) -> [Color] {
@@ -375,18 +359,18 @@ private struct ForecastLoadingSkeleton: View {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(Color.white.opacity(0.16))
                 .frame(height: 64)
-                .weatherGlassCard(cornerRadius: 20, tint: Color.white.opacity(0.08))
+                .weatherGlassCard(cornerRadius: 20)
 
             HStack(spacing: 14) {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(Color.white.opacity(0.16))
                     .frame(height: 50)
-                    .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.08))
+                    .weatherGlassCard(cornerRadius: 18)
 
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(Color.white.opacity(0.16))
                     .frame(width: 124, height: 50)
-                    .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.08))
+                    .weatherGlassCard(cornerRadius: 18)
             }
         }
     }
@@ -415,7 +399,7 @@ private struct ForecastLoadingSkeleton: View {
             }
         }
         .padding(24)
-        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 30)
     }
 
     private var metricRow: some View {
@@ -424,7 +408,7 @@ private struct ForecastLoadingSkeleton: View {
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .fill(Color.white.opacity(0.16))
                     .frame(height: 92)
-                    .weatherGlassCard(cornerRadius: 22, tint: Color.white.opacity(0.08))
+                    .weatherGlassCard(cornerRadius: 22)
             }
         }
     }
@@ -435,7 +419,7 @@ private struct ForecastLoadingSkeleton: View {
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .fill(Color.white.opacity(0.16))
                     .frame(height: 62)
-                    .weatherGlassCard(cornerRadius: 22, tint: Color.white.opacity(0.08))
+                    .weatherGlassCard(cornerRadius: 22)
             }
         }
     }

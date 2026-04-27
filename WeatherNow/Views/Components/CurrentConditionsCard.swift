@@ -18,8 +18,8 @@ struct CurrentConditionsCard: View {
             }
         }
         .foregroundStyle(.white)
-        .padding(24)
-        .weatherGlassCard(cornerRadius: 30, tint: WeatherGlassPalette.cool.opacity(0.16))
+        .padding(20)
+        .weatherGlassCard(cornerRadius: 30)
     }
 
     private var cardContent: some View {
@@ -44,7 +44,7 @@ struct CurrentConditionsCard: View {
                         }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
-                        .weatherGlassChip(cornerRadius: 16, tint: Color.white.opacity(0.10))
+                        .weatherGlassChip(cornerRadius: 16)
                         .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
@@ -55,17 +55,17 @@ struct CurrentConditionsCard: View {
                     .font(.system(size: 42))
                     .symbolRenderingMode(.multicolor)
                     .padding(14)
-                    .weatherGlassChip(cornerRadius: 22, tint: Color.white.opacity(0.10))
+                    .weatherGlassChip(cornerRadius: 22)
             }
 
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 Text(displayTemperature(snapshot.current.temperature))
-                    .font(.system(size: 88, weight: .semibold, design: .rounded))
+                    .font(.system(size: 80, weight: .semibold, design: .rounded))
                     .contentTransition(.numericText())
                 Text("°")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.82))
-                    .padding(.bottom, 18)
+                    .padding(.bottom, 16)
             }
 
             HStack(spacing: 8) {
@@ -79,26 +79,25 @@ struct CurrentConditionsCard: View {
                 Button {
                     onShowDetails()
                 } label: {
-                    actionPill(
-                        title: "Details",
-                        symbol: "chart.line.uptrend.xyaxis",
-                        tint: WeatherGlassPalette.warm.opacity(0.18)
-                    )
+                    Label("Details", systemImage: "chart.line.uptrend.xyaxis")
+                        .font(.subheadline.weight(.semibold))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
                 }
-                .buttonStyle(.plain)
+                .weatherGlassButton(prominent: true)
 
                 Spacer()
 
                 Button {
                     onSaveCity()
                 } label: {
-                    actionPill(
-                        title: "Save",
-                        symbol: "plus.circle.fill",
-                        tint: WeatherGlassPalette.slate.opacity(0.18)
-                    )
+                    Label("Save", systemImage: "plus.circle.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .foregroundStyle(.blue)
                 }
-                .buttonStyle(.plain)
+                .weatherGlassButton()
             }
         }
     }
@@ -125,18 +124,9 @@ struct CurrentConditionsCard: View {
                 .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, minHeight: 72)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 10)
-        .weatherGlassChip(cornerRadius: 18, tint: WeatherGlassPalette.slate.opacity(0.14))
+        .padding(.horizontal, 6)
+        .padding(.vertical, 9)
+        .weatherGlassChip(cornerRadius: 18)
         .contentTransition(.interpolate)
-    }
-
-    private func actionPill(title: String, symbol: String, tint: Color) -> some View {
-        Label(title, systemImage: symbol)
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(.white)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .weatherGlassChip(cornerRadius: 18, tint: tint, interactive: true)
     }
 }

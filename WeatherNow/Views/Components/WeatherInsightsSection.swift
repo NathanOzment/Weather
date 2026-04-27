@@ -33,7 +33,7 @@ struct WeatherAlertsSection: View {
                         Spacer()
                     }
                     .padding(16)
-                    .weatherGlassCard(cornerRadius: 22, tint: alert.backgroundColor)
+                    .weatherGlassCard(cornerRadius: 22, tint: alert.backgroundColor.opacity(0.55))
                 }
             }
         }
@@ -65,7 +65,7 @@ struct WeatherInsightsSection: View {
                 .font(.headline)
                 .foregroundStyle(.white.opacity(0.88))
                 .padding(10)
-                .weatherGlassChip(cornerRadius: 16, tint: WeatherGlassPalette.slate.opacity(0.14))
+                .weatherGlassChip(cornerRadius: 16)
             Text(title)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.white.opacity(0.7))
@@ -75,7 +75,7 @@ struct WeatherInsightsSection: View {
         }
         .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
         .padding(16)
-        .weatherGlassCard(cornerRadius: 24, tint: WeatherGlassPalette.cool.opacity(0.14))
+        .weatherGlassCard(cornerRadius: 24)
     }
 }
 
