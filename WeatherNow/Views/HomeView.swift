@@ -48,7 +48,7 @@ struct HomeView: View {
                             ContentUnavailableView(
                                 "Forecast unavailable",
                                 systemImage: "cloud.slash",
-                                description: Text("Pull to refresh or search for a city to try again.")
+                                description: Text("Pull to refresh or search for a new skyline to set the mood again.")
                             )
                             .foregroundStyle(.white)
                             .padding(24)
@@ -147,7 +147,8 @@ struct HomeView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.white.opacity(0.75))
 
-            TextField("Search city", text: $store.searchQuery)
+            TextField("Search a city mood", text: $store.searchQuery)
+                .accessibilityLabel("Search city")
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled()
                 .submitLabel(.search)

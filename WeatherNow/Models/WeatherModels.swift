@@ -32,6 +32,93 @@ extension WeatherSnapshot {
         Date().timeIntervalSince(updatedAt) > 60 * 90
     }
 
+    var vibeTitle: String {
+        switch (current.condition, vibeTimeWindow) {
+        case (.clear, .dawn), (.clear, .morning):
+            "Golden-hour energy"
+        case (.clear, .afternoon):
+            "Sunlit momentum"
+        case (.clear, .evening), (.clear, .night):
+            "Clear-sky reset"
+        case (.partlyCloudy, _):
+            "Soft-light mood"
+        case (.cloudy, _):
+            "Low-key sky"
+        case (.rain, _):
+            "Rain soundtrack"
+        case (.storm, _):
+            "Big-weather energy"
+        case (.snow, _):
+            "Snow-globe mood"
+        case (.fog, _):
+            "Dream-sequence air"
+        }
+    }
+
+    var vibeSubtitle: String {
+        switch current.condition {
+        case .clear:
+            "Bright, open air with the kind of clarity that makes the whole day feel lighter."
+        case .partlyCloudy:
+            "A little sky texture keeps things cinematic without losing the easygoing feel."
+        case .cloudy:
+            "Muted light, softer contrast, and a slower outside rhythm."
+        case .rain:
+            "Cooler air, quieter streets, and clear umbrella-core energy."
+        case .storm:
+            "The dramatic version of weather. Best enjoyed with a roof above you."
+        case .snow:
+            "Bundled-up brightness with that extra hush snow brings to everything."
+        case .fog:
+            "Close horizons, soft edges, and real moody-depth weather."
+        }
+    }
+
+    var vibeTags: [String] {
+        var tags: [String] = []
+
+        switch current.condition {
+        case .clear:
+            tags.append(vibeTimeWindow == .evening ? "blue-hour glow" : "clear view")
+        case .partlyCloudy:
+            tags.append("soft contrast")
+        case .cloudy:
+            tags.append("muted light")
+        case .rain:
+            tags.append("umbrella ready")
+        case .storm:
+            tags.append("indoor plans")
+        case .snow:
+            tags.append("bundle up")
+        case .fog:
+            tags.append("moody depth")
+        }
+
+        if current.apparentTemperature <= 9 {
+            tags.append("hoodie weather")
+        } else if current.apparentTemperature >= 28 {
+            tags.append("warm air")
+        } else {
+            tags.append("easy layers")
+        }
+
+        if current.windSpeed >= 28 {
+            tags.append("windy edge")
+        } else if current.windSpeed <= 12 {
+            tags.append("easy walk")
+        }
+
+        if current.uvIndex >= 6 {
+            tags.append("bright light")
+        }
+
+        return deduplicated(tags)
+    }
+
+    var primaryVibeTag: String? {
+        vibeTags.first
+    }
+
     var alerts: [WeatherAlert] {
         var results: [WeatherAlert] = []
 
@@ -133,6 +220,36 @@ extension WeatherSnapshot {
             .prefix(3)
             .map { $0 }
     }
+
+    private var vibeTimeWindow: VibeTimeWindow {
+        let hour = Calendar.current.component(.hour, from: Date())
+
+        switch hour {
+        case 5..<9:
+            return VibeTimeWindow.dawn
+        case 9..<12:
+            return VibeTimeWindow.morning
+        case 12..<17:
+            return VibeTimeWindow.afternoon
+        case 17..<21:
+            return VibeTimeWindow.evening
+        default:
+            return VibeTimeWindow.night
+        }
+    }
+
+    private func deduplicated(_ values: [String]) -> [String] {
+        var seen = Set<String>()
+        return values.filter { seen.insert($0).inserted }
+    }
+}
+
+private enum VibeTimeWindow {
+    case dawn
+    case morning
+    case afternoon
+    case evening
+    case night
 }
 
 struct SunSchedule: Equatable, Codable {

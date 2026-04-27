@@ -18,7 +18,7 @@ struct CurrentConditionsCard: View {
             }
         }
         .foregroundStyle(.white)
-        .padding(16)
+        .padding(14)
         .weatherGlassCard(cornerRadius: 32, tint: accentTint.opacity(0.14))
     }
 
@@ -32,18 +32,25 @@ struct CurrentConditionsCard: View {
     }
 
     private var headerShelf: some View {
-        HStack(alignment: .top, spacing: 16) {
-            VStack(alignment: .leading, spacing: 10) {
+        HStack(alignment: .top, spacing: 14) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(snapshot.cityName)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .contentTransition(.interpolate)
 
+                Text(snapshot.vibeTitle)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.74))
+                    .lineLimit(1)
+                    .contentTransition(.interpolate)
+
                 HStack(spacing: 8) {
                     Text(snapshot.current.condition.title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.94))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
+                        .lineLimit(1)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
                         .weatherGlassLens(cornerRadius: 18, tint: accentTint.opacity(0.12))
                         .contentTransition(.interpolate)
 
@@ -58,21 +65,38 @@ struct CurrentConditionsCard: View {
                 .symbolRenderingMode(.multicolor)
                 .padding(16)
                 .weatherGlassLens(cornerRadius: 24, tint: accentTint.opacity(0.14))
+                .background(alignment: .center) {
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    accentTint.opacity(0.28),
+                                    accentTint.opacity(0.10),
+                                    .clear
+                                ],
+                                center: .center,
+                                startRadius: 8,
+                                endRadius: 58
+                            )
+                        )
+                        .frame(width: 118, height: 118)
+                        .blur(radius: 14)
+                }
         }
-        .padding(14)
+        .padding(12)
         .weatherGlassCard(cornerRadius: 28, tint: accentTint.opacity(0.12))
     }
 
     private var temperatureShelf: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 Text(displayTemperature(snapshot.current.temperature))
-                    .font(.system(size: 74, weight: .semibold, design: .rounded))
+                    .font(.system(size: 68, weight: .semibold, design: .rounded))
                     .contentTransition(.numericText())
                 Text("°")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.82))
-                    .padding(.bottom, 12)
+                    .padding(.bottom, 10)
 
                 Spacer()
 
@@ -92,10 +116,10 @@ struct CurrentConditionsCard: View {
                 compactReadingColumn(title: "High", value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.high ?? snapshot.current.temperature))
                 compactReadingColumn(title: "Low", value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.low ?? snapshot.current.temperature))
             }
-            .padding(8)
+            .padding(4)
             .weatherGlassCard(cornerRadius: 22, tint: accentTint.opacity(0.08))
         }
-        .padding(14)
+        .padding(12)
         .weatherGlassLens(cornerRadius: 30, tint: accentTint.opacity(0.10))
     }
 
@@ -108,7 +132,7 @@ struct CurrentConditionsCard: View {
                 weatherMetric(title: "UV", value: "\(snapshot.current.uvIndex)", symbol: "sun.max.fill")
             }
         }
-        .padding(10)
+        .padding(8)
         .weatherGlassCard(cornerRadius: 26, tint: WeatherGlassPalette.slate.opacity(0.16))
     }
 
@@ -193,8 +217,8 @@ struct CurrentConditionsCard: View {
                 .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
         .contentTransition(.interpolate)
     }
 
@@ -215,9 +239,9 @@ struct CurrentConditionsCard: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .frame(maxWidth: .infinity, minHeight: 60)
+        .frame(maxWidth: .infinity, minHeight: 52)
         .padding(.horizontal, 6)
-        .padding(.vertical, 7)
+        .padding(.vertical, 6)
         .weatherGlassLens(cornerRadius: 20, tint: WeatherGlassPalette.cool.opacity(0.12))
         .contentTransition(.interpolate)
     }
