@@ -13,51 +13,109 @@ extension View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
         if #available(iOS 26, *) {
-            let glass = (tint.map { Glass.regular.tint($0.opacity(0.18)) } ?? .regular).interactive(interactive)
+            let glass = (tint.map { Glass.regular.tint($0.opacity(0.12)) } ?? .regular).interactive(interactive)
             glassEffect(glass, in: shape)
             .overlay {
-                shape
-                    .strokeBorder(Color.white.opacity(0.06), lineWidth: 0.8)
+                ZStack {
+                    shape
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.24),
+                                    Color.white.opacity(0.06),
+                                    Color.white.opacity(0.14)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
 
-                if let tint {
                     shape
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    Color.white.opacity(0.04),
-                                    tint.opacity(0.03),
-                                    .clear
+                                    Color.white.opacity(0.10),
+                                    .clear,
+                                    Color.white.opacity(0.05)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
                         .blendMode(.screen)
+
+                    Ellipse()
+                        .fill(Color.white.opacity(interactive ? 0.24 : 0.18))
+                        .frame(width: max(cornerRadius * 5.4, 150), height: max(cornerRadius * 2.0, 68))
+                        .blur(radius: 12)
+                        .offset(x: -cornerRadius * 0.35, y: -cornerRadius * 0.9)
+
+                    Ellipse()
+                        .fill((tint ?? WeatherGlassPalette.cool).opacity(interactive ? 0.14 : 0.10))
+                        .frame(width: max(cornerRadius * 4.1, 120), height: max(cornerRadius * 1.5, 54))
+                        .blur(radius: 16)
+                        .offset(x: cornerRadius * 0.85, y: cornerRadius * 0.95)
+
+                    shape
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    .clear,
+                                    Color.black.opacity(0.08)
+                                ],
+                                startPoint: .center,
+                                endPoint: .bottom
+                            )
+                        )
+                        .blendMode(.multiply)
                 }
+                .mask(shape)
             }
+            .compositingGroup()
             .shadow(color: .black.opacity(0.08), radius: 12, y: 6)
         } else {
             background(
                 shape
                     .fill(.ultraThinMaterial.opacity(0.78))
                     .overlay {
-                        shape
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0.08),
-                                        (tint ?? Color.white.opacity(0.04)).opacity(0.16),
-                                        Color.white.opacity(0.02)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
+                        ZStack {
+                            shape
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.10),
+                                            (tint ?? Color.white.opacity(0.04)).opacity(0.14),
+                                            Color.white.opacity(0.02)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
                                 )
-                            )
+
+                            Ellipse()
+                                .fill(Color.white.opacity(0.16))
+                                .frame(width: max(cornerRadius * 5.0, 136), height: max(cornerRadius * 1.8, 60))
+                                .blur(radius: 12)
+                                .offset(x: -cornerRadius * 0.3, y: -cornerRadius * 0.8)
+                        }
+                        .mask(shape)
                     }
             )
             .overlay(
                 shape
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.20),
+                                Color.white.opacity(0.06),
+                                Color.white.opacity(0.12)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
             )
             .shadow(color: .black.opacity(0.10), radius: 14, y: 8)
         }
@@ -68,37 +126,80 @@ extension View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
         if #available(iOS 26, *) {
-            let glass = (tint.map { Glass.regular.tint($0.opacity(0.16)) } ?? .regular).interactive(interactive)
+            let glass = (tint.map { Glass.regular.tint($0.opacity(0.10)) } ?? .regular).interactive(interactive)
             glassEffect(glass, in: shape)
             .overlay {
-                shape
-                    .strokeBorder(Color.white.opacity(0.06), lineWidth: 0.8)
+                ZStack {
+                    shape
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.22),
+                                    Color.white.opacity(0.05),
+                                    Color.white.opacity(0.12)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.9
+                        )
 
-                if let tint {
                     shape
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    Color.white.opacity(0.03),
-                                    tint.opacity(0.03),
-                                    .clear
+                                    Color.white.opacity(0.08),
+                                    .clear,
+                                    Color.white.opacity(0.04)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
                         .blendMode(.screen)
+
+                    Ellipse()
+                        .fill(Color.white.opacity(interactive ? 0.22 : 0.16))
+                        .frame(width: max(cornerRadius * 4.4, 84), height: max(cornerRadius * 1.4, 28))
+                        .blur(radius: 8)
+                        .offset(x: -cornerRadius * 0.18, y: -cornerRadius * 0.62)
+
+                    Ellipse()
+                        .fill((tint ?? WeatherGlassPalette.cool).opacity(interactive ? 0.12 : 0.08))
+                        .frame(width: max(cornerRadius * 3.0, 64), height: max(cornerRadius, 20))
+                        .blur(radius: 10)
+                        .offset(x: cornerRadius * 0.65, y: cornerRadius * 0.5)
                 }
+                .mask(shape)
             }
             .shadow(color: .black.opacity(0.06), radius: 6, y: 3)
         } else {
             background(
                 shape
-                    .fill((tint ?? Color.white).opacity(tint == nil ? 0.10 : 0.14))
+                    .fill((tint ?? Color.white).opacity(tint == nil ? 0.10 : 0.12))
+                    .overlay {
+                        Ellipse()
+                            .fill(Color.white.opacity(0.14))
+                            .frame(width: max(cornerRadius * 3.8, 72), height: max(cornerRadius * 1.1, 22))
+                            .blur(radius: 8)
+                            .offset(x: -cornerRadius * 0.15, y: -cornerRadius * 0.5)
+                            .mask(shape)
+                    }
             )
             .overlay(
                 shape
-                    .stroke(Color.white.opacity(0.06), lineWidth: 0.8)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.18),
+                                Color.white.opacity(0.05),
+                                Color.white.opacity(0.10)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 0.8
+                    )
             )
         }
     }
@@ -115,18 +216,52 @@ private extension View {
     func ifAvailableGlassOrb(size: CGFloat, tint: Color?, interactive: Bool) -> some View {
         if #available(iOS 26, *) {
             glassEffect(
-                (tint.map { Glass.regular.tint($0.opacity(0.14)) } ?? .regular).interactive(interactive),
+                (tint.map { Glass.regular.tint($0.opacity(0.10)) } ?? .regular).interactive(interactive),
                 in: Circle()
             )
             .overlay {
-                Circle()
-                    .strokeBorder(Color.white.opacity(0.06), lineWidth: 0.8)
+                ZStack {
+                    Circle()
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.24),
+                                    Color.white.opacity(0.05),
+                                    Color.white.opacity(0.14)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.9
+                        )
+
+                    Ellipse()
+                        .fill(Color.white.opacity(0.22))
+                        .frame(width: size * 0.72, height: size * 0.28)
+                        .blur(radius: 7)
+                        .offset(x: -size * 0.1, y: -size * 0.22)
+
+                    Ellipse()
+                        .fill((tint ?? WeatherGlassPalette.cool).opacity(0.10))
+                        .frame(width: size * 0.56, height: size * 0.46)
+                        .blur(radius: 9)
+                        .offset(x: size * 0.12, y: size * 0.16)
+                }
+                .mask(Circle())
             }
             .shadow(color: .black.opacity(0.08), radius: 10, y: 5)
         } else {
             background(
                 Circle()
                     .fill((tint ?? Color.white).opacity(tint == nil ? 0.14 : 0.18))
+                    .overlay {
+                        Ellipse()
+                            .fill(Color.white.opacity(0.16))
+                            .frame(width: size * 0.72, height: size * 0.28)
+                            .blur(radius: 7)
+                            .offset(x: -size * 0.1, y: -size * 0.22)
+                            .mask(Circle())
+                    }
             )
         }
     }
