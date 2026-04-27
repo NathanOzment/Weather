@@ -109,6 +109,8 @@ struct WeatherMapView: View {
                 .disabled(store.isRefreshingCurrentLocation)
                 .weatherGlassButton(prominent: true)
             }
+            .padding(14)
+            .weatherGlassLens(cornerRadius: 24, tint: WeatherGlassPalette.cool.opacity(0.10))
 
             Picker("Layer", selection: $layerMode) {
                 ForEach(MapLayerMode.allCases) { mode in
@@ -170,10 +172,12 @@ struct WeatherMapView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(10)
-                    .weatherGlassChip(cornerRadius: 16, tint: Color.white.opacity(0.08))
+                    .weatherGlassLens(cornerRadius: 18, tint: item.color.opacity(0.14))
                 }
             }
         }
+        .padding(14)
+        .weatherGlassCard(cornerRadius: 24, tint: WeatherGlassPalette.slate.opacity(0.12))
     }
 
     private func focusCard(for point: MapWeatherPoint) -> some View {
@@ -191,15 +195,22 @@ struct WeatherMapView: View {
                 Spacer()
 
                 Text(layerMode.primaryValue(for: point.snapshot, temperatureUnit: store.temperatureUnit))
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .weatherGlassLens(cornerRadius: 20, tint: point.tintColor(for: layerMode).opacity(0.14))
             }
+            .padding(14)
+            .weatherGlassLens(cornerRadius: 24, tint: point.tintColor(for: layerMode).opacity(0.10))
 
             HStack(spacing: 12) {
                 ForEach(layerMode.metrics(for: point.snapshot, temperatureUnit: store.temperatureUnit), id: \.value) { metric in
                     mapMetric(symbol: metric.symbol, value: metric.value)
                 }
             }
+            .padding(14)
+            .weatherGlassCard(cornerRadius: 24, tint: WeatherGlassPalette.slate.opacity(0.10))
 
             if !point.snapshot.alerts.isEmpty {
                 Text(point.snapshot.alerts.first?.title ?? "")
@@ -286,7 +297,7 @@ struct WeatherMapView: View {
         .foregroundStyle(.white.opacity(0.86))
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+        .weatherGlassLens(cornerRadius: 18, tint: Color.white.opacity(0.08))
     }
 
     private func loadingBanner(_ message: String) -> some View {

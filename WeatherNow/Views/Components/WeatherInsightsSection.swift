@@ -6,9 +6,20 @@ struct WeatherAlertsSection: View {
     var body: some View {
         if !snapshot.alerts.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Weather Alerts")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.white)
+                HStack {
+                    Text("Weather Alerts")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.white)
+
+                    Spacer()
+
+                    Text("\(snapshot.alerts.count)")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .weatherGlassLens(cornerRadius: 18, tint: Color.white.opacity(0.08))
+                }
 
                 ForEach(snapshot.alerts) { alert in
                     HStack(alignment: .top, spacing: 14) {
@@ -17,7 +28,7 @@ struct WeatherAlertsSection: View {
                             .foregroundStyle(alert.tintColor)
                             .frame(width: 24)
                             .padding(10)
-                            .weatherGlassChip(cornerRadius: 16, tint: alert.tintColor.opacity(0.18))
+                            .weatherGlassLens(cornerRadius: 18, tint: alert.tintColor.opacity(0.20))
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text(alert.title)
@@ -33,9 +44,11 @@ struct WeatherAlertsSection: View {
                         Spacer()
                     }
                     .padding(16)
-                    .weatherGlassCard(cornerRadius: 22, tint: alert.backgroundColor.opacity(0.55))
+                    .weatherGlassLens(cornerRadius: 24, tint: alert.backgroundColor.opacity(0.42))
                 }
             }
+            .padding(18)
+            .weatherGlassCard(cornerRadius: 28, tint: Color.white.opacity(0.06))
         }
     }
 }
@@ -45,10 +58,21 @@ struct WeatherInsightsSection: View {
     let temperatureUnit: TemperatureUnit
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Today's Details")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(.white)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Today's Details")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white)
+
+                Spacer()
+
+                Text("Live Readings")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.88))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .weatherGlassLens(cornerRadius: 18, tint: WeatherGlassPalette.cool.opacity(0.12))
+            }
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 insightCard(title: "Feels Like", value: temperatureUnit.temperatureString(fromCelsius: snapshot.current.apparentTemperature), icon: "thermometer.medium")
@@ -57,25 +81,31 @@ struct WeatherInsightsSection: View {
                 insightCard(title: "Pressure", value: "\(snapshot.current.pressure) hPa", icon: "gauge.with.dots.needle.50percent")
             }
         }
+        .padding(18)
+        .weatherGlassCard(cornerRadius: 28, tint: WeatherGlassPalette.slate.opacity(0.14))
     }
 
     private func insightCard(title: String, value: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .font(.headline)
                 .foregroundStyle(.white.opacity(0.88))
                 .padding(10)
-                .weatherGlassChip(cornerRadius: 16)
-            Text(title)
-                .font(.caption.weight(.medium))
-                .foregroundStyle(.white.opacity(0.7))
-            Text(value)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(.white)
+                .weatherGlassLens(cornerRadius: 18, tint: WeatherGlassPalette.cool.opacity(0.14))
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.7))
+                Text(value)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .minimumScaleFactor(0.8)
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
-        .padding(16)
-        .weatherGlassCard(cornerRadius: 24)
+        .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
+        .padding(14)
+        .weatherGlassLens(cornerRadius: 22, tint: WeatherGlassPalette.cool.opacity(0.10))
     }
 }
 

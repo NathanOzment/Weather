@@ -62,9 +62,20 @@ struct SavedLocationsView: View {
                                             VStack(alignment: .leading, spacing: 6) {
                                                 Text(city)
                                                     .font(.headline.weight(.semibold))
-                                                Text(store.cachedUpdatedText(for: city) ?? "Open detailed forecast")
-                                                    .font(.subheadline)
-                                                    .foregroundStyle(.white.opacity(0.72))
+                                                HStack(spacing: 8) {
+                                                    Text(store.cachedUpdatedText(for: city) ?? "Open detailed forecast")
+                                                        .font(.subheadline)
+                                                        .foregroundStyle(.white.opacity(0.72))
+
+                                                    if store.cachedSnapshot(for: city) != nil {
+                                                        Text("Cached")
+                                                            .font(.caption.weight(.semibold))
+                                                            .foregroundStyle(.white.opacity(0.9))
+                                                            .padding(.horizontal, 10)
+                                                            .padding(.vertical, 6)
+                                                            .weatherGlassLens(cornerRadius: 16, tint: WeatherGlassPalette.cool.opacity(0.12))
+                                                    }
+                                                }
                                                 if let cachedSnapshot = store.cachedSnapshot(for: city), cachedSnapshot.isStale {
                                                     Text("Saved forecast may be getting stale")
                                                         .font(.caption.weight(.medium))
@@ -96,9 +107,11 @@ struct SavedLocationsView: View {
                                     }
                                     .buttonStyle(.plain)
                                     .disabled(openingCityName != nil || store.isRefreshingSavedCities)
+                                    .padding(8)
+                                    .weatherGlassLens(cornerRadius: 18, tint: Color.white.opacity(0.08))
                                 }
                                 .padding(18)
-                                .weatherGlassCard(cornerRadius: 24)
+                                .weatherGlassCard(cornerRadius: 26, tint: WeatherGlassPalette.slate.opacity(0.14))
                             }
                         }
                         .padding(20)

@@ -11,70 +11,81 @@ struct CityComparisonSection: View {
     var body: some View {
         if let comparison {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Best City Today")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.white)
+                HStack {
+                    Text("Best City Today")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.white)
 
-                VStack(alignment: .leading, spacing: 14) {
-                    HStack(alignment: .top) {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(comparison.bestOverall.cityName)
-                                .font(.title3.weight(.bold))
-                                .foregroundStyle(.white)
-                            Text(comparison.bestOverallReason)
-                                .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.76))
-                        }
+                    Spacer()
 
-                        Spacer()
+                    Text(comparison.bestOverallScore)
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .weatherGlassLens(cornerRadius: 20, tint: WeatherGlassPalette.cool.opacity(0.16))
+                }
 
-                        Text(comparison.bestOverallScore)
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                HStack(alignment: .top, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(comparison.bestOverall.cityName)
+                            .font(.title3.weight(.bold))
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .weatherGlassChip(cornerRadius: 22)
+                        Text(comparison.bestOverallReason)
+                            .font(.subheadline)
+                            .foregroundStyle(.white.opacity(0.76))
+                            .fixedSize(horizontal: false, vertical: true)
                     }
 
-                    HStack(spacing: 12) {
-                        comparisonCard(
-                            title: "Warmest",
-                            city: comparison.warmest.cityName,
-                            detail: temperatureUnit.temperatureString(fromCelsius: comparison.warmest.current.temperature),
-                            icon: "thermometer.sun.fill",
-                            tint: Color(red: 0.98, green: 0.64, blue: 0.28)
-                        )
+                    Spacer()
 
-                        comparisonCard(
-                            title: "Driest",
-                            city: comparison.driest.cityName,
-                            detail: "\(comparison.driest.daily.first?.precipitationChance ?? 0)% rain chance",
-                            icon: "sun.max.fill",
-                            tint: Color(red: 0.98, green: 0.81, blue: 0.35)
-                        )
-                    }
+                    Image(systemName: comparison.bestOverall.current.condition.sfSymbol)
+                        .font(.title2)
+                        .symbolRenderingMode(.multicolor)
+                        .padding(12)
+                        .weatherGlassLens(cornerRadius: 20, tint: WeatherGlassPalette.cool.opacity(0.12))
+                }
+                .padding(16)
+                .weatherGlassLens(cornerRadius: 24, tint: WeatherGlassPalette.cool.opacity(0.10))
 
-                    HStack(spacing: 12) {
-                        comparisonCard(
-                            title: "Cleanest Air",
-                            city: comparison.cleanestAir.cityName,
-                            detail: "AQI \(comparison.cleanestAir.airQuality.usAqi)",
-                            icon: "leaf.fill",
-                            tint: Color(red: 0.40, green: 0.86, blue: 0.58)
-                        )
+                HStack(spacing: 12) {
+                    comparisonCard(
+                        title: "Warmest",
+                        city: comparison.warmest.cityName,
+                        detail: temperatureUnit.temperatureString(fromCelsius: comparison.warmest.current.temperature),
+                        icon: "thermometer.sun.fill",
+                        tint: Color(red: 0.98, green: 0.64, blue: 0.28)
+                    )
 
-                        comparisonCard(
-                            title: "Lowest Risk",
-                            city: comparison.lowestRisk.cityName,
-                            detail: comparison.lowestRisk.alerts.isEmpty ? "No active alerts" : "\(comparison.lowestRisk.alerts.count) alert\(comparison.lowestRisk.alerts.count == 1 ? "" : "s")",
-                            icon: "checkmark.shield.fill",
-                            tint: Color(red: 0.47, green: 0.81, blue: 0.94)
-                        )
-                    }
+                    comparisonCard(
+                        title: "Driest",
+                        city: comparison.driest.cityName,
+                        detail: "\(comparison.driest.daily.first?.precipitationChance ?? 0)% rain chance",
+                        icon: "sun.max.fill",
+                        tint: Color(red: 0.98, green: 0.81, blue: 0.35)
+                    )
+                }
+
+                HStack(spacing: 12) {
+                    comparisonCard(
+                        title: "Cleanest Air",
+                        city: comparison.cleanestAir.cityName,
+                        detail: "AQI \(comparison.cleanestAir.airQuality.usAqi)",
+                        icon: "leaf.fill",
+                        tint: Color(red: 0.40, green: 0.86, blue: 0.58)
+                    )
+
+                    comparisonCard(
+                        title: "Lowest Risk",
+                        city: comparison.lowestRisk.cityName,
+                        detail: comparison.lowestRisk.alerts.isEmpty ? "No active alerts" : "\(comparison.lowestRisk.alerts.count) alert\(comparison.lowestRisk.alerts.count == 1 ? "" : "s")",
+                        icon: "checkmark.shield.fill",
+                        tint: Color(red: 0.47, green: 0.81, blue: 0.94)
+                    )
                 }
             }
             .padding(18)
-            .weatherGlassCard(cornerRadius: 28)
+            .weatherGlassCard(cornerRadius: 30, tint: WeatherGlassPalette.slate.opacity(0.16))
         }
     }
 
@@ -100,8 +111,8 @@ struct CityComparisonSection: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
-        .padding(18)
-        .weatherGlassCard(cornerRadius: 24, tint: tint.opacity(0.08))
+        .padding(16)
+        .weatherGlassLens(cornerRadius: 24, tint: tint.opacity(0.10))
     }
 }
 

@@ -93,36 +93,42 @@ struct WeatherDetailView: View {
     }
 
     private var summaryCardContent: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Image(systemName: snapshot.current.condition.sfSymbol)
                     .font(.system(size: 38))
                     .symbolRenderingMode(.multicolor)
                     .padding(14)
-                    .weatherGlassChip(cornerRadius: 22)
+                    .weatherGlassLens(cornerRadius: 22, tint: WeatherGlassPalette.cool.opacity(0.12))
                 Spacer()
                 Text(snapshot.current.condition.title)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.88))
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
-                    .weatherGlassChip(cornerRadius: 18)
+                    .weatherGlassLens(cornerRadius: 18, tint: WeatherGlassPalette.cool.opacity(0.10))
             }
+            .padding(14)
+            .weatherGlassLens(cornerRadius: 24, tint: WeatherGlassPalette.cool.opacity(0.08))
 
-            Text(temperatureUnit.temperatureString(fromCelsius: snapshot.current.temperature))
-                .font(.system(size: 72, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white)
+            VStack(alignment: .leading, spacing: 12) {
+                Text(temperatureUnit.temperatureString(fromCelsius: snapshot.current.temperature))
+                    .font(.system(size: 72, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
 
-            HStack(spacing: 12) {
-                temperatureChip(
-                    title: "High",
-                    value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.high ?? snapshot.current.temperature)
-                )
-                temperatureChip(
-                    title: "Low",
-                    value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.low ?? snapshot.current.temperature)
-                )
+                HStack(spacing: 12) {
+                    temperatureChip(
+                        title: "High",
+                        value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.high ?? snapshot.current.temperature)
+                    )
+                    temperatureChip(
+                        title: "Low",
+                        value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.low ?? snapshot.current.temperature)
+                    )
+                }
             }
+            .padding(16)
+            .weatherGlassLens(cornerRadius: 28, tint: WeatherGlassPalette.cool.opacity(0.10))
         }
     }
 
@@ -138,6 +144,6 @@ struct WeatherDetailView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .weatherGlassChip(cornerRadius: 18)
+        .weatherGlassLens(cornerRadius: 18, tint: WeatherGlassPalette.cool.opacity(0.12))
     }
 }

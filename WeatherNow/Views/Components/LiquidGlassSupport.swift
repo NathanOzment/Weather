@@ -122,6 +122,123 @@ extension View {
     }
 
     @ViewBuilder
+    func weatherGlassLens(cornerRadius: CGFloat = 24, tint: Color? = nil, interactive: Bool = false) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
+        if #available(iOS 26, *) {
+            let lensTint = tint ?? Color.white
+            let glass = Glass.regular
+                .tint(lensTint.opacity(tint == nil ? 0.06 : 0.12))
+                .interactive(interactive)
+
+            glassEffect(glass, in: shape)
+                .overlay {
+                    ZStack {
+                        shape
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(0.34),
+                                        Color.white.opacity(0.09),
+                                        Color.white.opacity(0.18)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 0.95
+                            )
+
+                        shape
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(0.22),
+                                        Color.white.opacity(0.04),
+                                        .clear
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .blendMode(.screen)
+
+                        Ellipse()
+                            .fill(Color.white.opacity(interactive ? 0.28 : 0.22))
+                            .frame(width: max(cornerRadius * 5.1, 110), height: max(cornerRadius * 1.6, 34))
+                            .blur(radius: 9)
+                            .offset(x: -cornerRadius * 0.12, y: -cornerRadius * 0.62)
+
+                        Ellipse()
+                            .fill(lensTint.opacity(0.16))
+                            .frame(width: max(cornerRadius * 3.2, 72), height: max(cornerRadius * 1.6, 30))
+                            .blur(radius: 11)
+                            .offset(x: cornerRadius * 0.58, y: cornerRadius * 0.52)
+
+                        shape
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        .clear,
+                                        Color.black.opacity(0.05)
+                                    ],
+                                    startPoint: .center,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .blendMode(.multiply)
+                    }
+                    .mask(shape)
+                }
+                .shadow(color: .white.opacity(0.04), radius: 2, y: 1)
+                .shadow(color: .black.opacity(0.07), radius: 8, y: 4)
+        } else {
+            background(
+                shape
+                    .fill(.ultraThinMaterial.opacity(0.94))
+                    .overlay {
+                        ZStack {
+                            shape
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.18),
+                                            (tint ?? Color.white).opacity(0.12),
+                                            Color.white.opacity(0.03)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+
+                            Ellipse()
+                                .fill(Color.white.opacity(0.2))
+                                .frame(width: max(cornerRadius * 4.5, 98), height: max(cornerRadius * 1.4, 28))
+                                .blur(radius: 8)
+                                .offset(x: -cornerRadius * 0.1, y: -cornerRadius * 0.52)
+                        }
+                        .mask(shape)
+                    }
+            )
+            .overlay(
+                shape
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.28),
+                                Color.white.opacity(0.08),
+                                Color.white.opacity(0.14)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 0.9
+                    )
+            )
+            .shadow(color: .black.opacity(0.08), radius: 8, y: 4)
+        }
+    }
+
+    @ViewBuilder
     func weatherGlassChip(cornerRadius: CGFloat = 18, tint: Color? = nil, interactive: Bool = false) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
