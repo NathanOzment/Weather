@@ -121,6 +121,7 @@ struct WeatherMapView: View {
                 }
             }
             .pickerStyle(.segmented)
+            .weatherGlassSegmentedControl(cornerRadius: 24, tint: Color.white.opacity(0.10))
 
             Map(position: $position) {
                 ForEach(points) { point in

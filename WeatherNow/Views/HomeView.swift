@@ -57,6 +57,8 @@ struct HomeView: View {
                                 description: Text("Pull to refresh or search for a city to try again.")
                             )
                             .foregroundStyle(.white)
+                            .padding(24)
+                            .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
                         }
                     }
                     .padding(.horizontal, 20)
@@ -261,6 +263,7 @@ struct HomeView: View {
                 }
             }
             .pickerStyle(.segmented)
+            .weatherGlassSegmentedControl(cornerRadius: 22, tint: Color.white.opacity(0.10))
 
             Button {
                 isSearchFocused = false

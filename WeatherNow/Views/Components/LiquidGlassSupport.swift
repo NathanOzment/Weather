@@ -2,35 +2,140 @@ import SwiftUI
 
 extension View {
     @ViewBuilder
-    func weatherGlassCard(cornerRadius: CGFloat = 30, tint: Color? = nil) -> some View {
+    func weatherGlassCard(cornerRadius: CGFloat = 30, tint: Color? = nil, interactive: Bool = false) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
         if #available(iOS 26, *) {
+            background {
+                shape
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.16),
+                                (tint ?? Color.white.opacity(0.10)).opacity(0.55),
+                                Color.white.opacity(0.03)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .blendMode(.screen)
+            }
+            .overlay {
+                shape
+                    .strokeBorder(Color.white.opacity(0.16), lineWidth: 0.8)
+
+                shape
+                    .inset(by: 1)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.26),
+                                (tint ?? Color.white.opacity(0.10)).opacity(0.26),
+                                Color.white.opacity(0.02)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.2
+                    )
+
+                shape
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.18),
+                                Color.white.opacity(0.04),
+                                .clear
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .center
+                        )
+                    )
+                    .blendMode(.screen)
+            }
             glassEffect(
-                tint.map { Glass.regular.tint($0) } ?? .regular,
-                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                (tint.map { Glass.regular.tint($0) } ?? .regular).interactive(interactive),
+                in: shape
             )
+            .shadow(color: .black.opacity(0.16), radius: 22, y: 12)
         } else {
             background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(.ultraThinMaterial.opacity(0.78))
+                shape
+                    .fill(.ultraThinMaterial.opacity(0.88))
+                    .overlay {
+                        shape
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(0.14),
+                                        (tint ?? Color.white.opacity(0.08)).opacity(0.42),
+                                        Color.white.opacity(0.02)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    }
             )
             .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                shape
                     .stroke(Color.white.opacity(0.08), lineWidth: 1)
             )
+            .shadow(color: .black.opacity(0.14), radius: 18, y: 10)
         }
     }
 
     @ViewBuilder
     func weatherGlassChip(cornerRadius: CGFloat = 18, tint: Color? = nil, interactive: Bool = false) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
         if #available(iOS 26, *) {
+            background {
+                shape
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.14),
+                                (tint ?? Color.white.opacity(0.08)).opacity(0.55),
+                                Color.white.opacity(0.02)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .blendMode(.screen)
+            }
+            .overlay {
+                shape
+                    .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
+
+                shape
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.16),
+                                .clear
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .blendMode(.screen)
+            }
             glassEffect(
                 (tint.map { Glass.regular.tint($0) } ?? .regular).interactive(interactive),
-                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                in: shape
             )
+            .shadow(color: .black.opacity(0.10), radius: 12, y: 6)
         } else {
             background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill((tint ?? Color.white).opacity(tint == nil ? 0.12 : 0.20))
+                shape
+                    .fill((tint ?? Color.white).opacity(tint == nil ? 0.14 : 0.20))
+            )
+            .overlay(
+                shape
+                    .stroke(Color.white.opacity(0.08), lineWidth: 0.8)
             )
         }
     }
@@ -50,6 +155,11 @@ private extension View {
                 (tint.map { Glass.regular.tint($0) } ?? .regular).interactive(interactive),
                 in: Circle()
             )
+            .overlay {
+                Circle()
+                    .strokeBorder(Color.white.opacity(0.16), lineWidth: 0.8)
+            }
+            .shadow(color: .black.opacity(0.14), radius: 16, y: 8)
         } else {
             background(
                 Circle()
@@ -78,6 +188,11 @@ struct WeatherGlassButtonStyleModifier: ViewModifier {
 extension View {
     func weatherGlassButton(prominent: Bool = false) -> some View {
         modifier(WeatherGlassButtonStyleModifier(prominent: prominent))
+    }
+
+    func weatherGlassSegmentedControl(cornerRadius: CGFloat = 24, tint: Color? = nil) -> some View {
+        padding(6)
+            .weatherGlassCard(cornerRadius: cornerRadius, tint: tint, interactive: true)
     }
 
     func weatherLoadingSheen(active: Bool = true) -> some View {

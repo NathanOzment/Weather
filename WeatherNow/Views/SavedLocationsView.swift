@@ -21,6 +21,8 @@ struct SavedLocationsView: View {
                         description: Text("Save a city from the Today tab to build your forecast list.")
                     )
                     .foregroundStyle(.white)
+                    .padding(24)
+                    .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
                 } else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 14) {

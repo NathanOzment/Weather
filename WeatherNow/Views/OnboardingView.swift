@@ -175,6 +175,7 @@ struct OnboardingView: View {
                 }
             }
             .pickerStyle(.segmented)
+            .weatherGlassSegmentedControl(cornerRadius: 22, tint: Color.white.opacity(0.10))
 
             VStack(alignment: .leading, spacing: 10) {
                 Text("Starter City")

@@ -35,6 +35,7 @@ struct SettingsView: View {
                                 }
                             }
                             .pickerStyle(.segmented)
+                            .weatherGlassSegmentedControl(cornerRadius: 22, tint: Color.white.opacity(0.10))
                         }
 
                         settingsCard {

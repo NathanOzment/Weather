@@ -31,6 +31,9 @@ struct CityComparisonSection: View {
                         Text(comparison.bestOverallScore)
                             .font(.system(size: 34, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .weatherGlassChip(cornerRadius: 22, tint: Color.white.opacity(0.10))
                     }
 
                     HStack(spacing: 12) {
@@ -70,6 +73,8 @@ struct CityComparisonSection: View {
                     }
                 }
             }
+            .padding(18)
+            .weatherGlassCard(cornerRadius: 28, tint: Color.white.opacity(0.08))
         }
     }
 
@@ -78,6 +83,8 @@ struct CityComparisonSection: View {
             Image(systemName: icon)
                 .font(.headline)
                 .foregroundStyle(tint)
+                .padding(10)
+                .weatherGlassChip(cornerRadius: 16, tint: tint.opacity(0.18))
 
             Text(title)
                 .font(.headline.weight(.semibold))
@@ -94,7 +101,7 @@ struct CityComparisonSection: View {
         }
         .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
         .padding(18)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .weatherGlassCard(cornerRadius: 24, tint: tint.opacity(0.12))
     }
 }
 
