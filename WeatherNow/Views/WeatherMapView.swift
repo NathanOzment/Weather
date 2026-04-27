@@ -145,7 +145,7 @@ struct WeatherMapView: View {
             layerLegend
         }
         .padding(18)
-        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 30, tint: WeatherGlassPalette.cool.opacity(0.14))
     }
 
     private var layerLegend: some View {
@@ -306,7 +306,7 @@ struct WeatherMapView: View {
             Spacer()
         }
         .padding(14)
-        .weatherGlassCard(cornerRadius: 18, tint: Color.white.opacity(0.10))
+        .weatherGlassCard(cornerRadius: 18, tint: WeatherGlassPalette.slate.opacity(0.16))
     }
 
     private func updateMapPosition() {

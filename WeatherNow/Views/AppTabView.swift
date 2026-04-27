@@ -1,14 +1,40 @@
 import SwiftUI
+import UIKit
 
-enum AppTab: Hashable {
+enum AppTab: String, Hashable, CaseIterable, Identifiable {
     case today
     case map
     case saved
     case settings
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .today: "Today"
+        case .map: "Map"
+        case .saved: "Saved"
+        case .settings: "Settings"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .today: "cloud.sun.fill"
+        case .map: "map.fill"
+        case .saved: "star.fill"
+        case .settings: "slider.horizontal.3"
+        }
+    }
 }
 
 struct AppTabView: View {
     @ObservedObject var store: WeatherStore
+
+    init(store: WeatherStore) {
+        self.store = store
+        UITabBar.appearance().isHidden = true
+    }
 
     var body: some View {
         TabView(selection: $store.selectedTab) {
@@ -36,32 +62,64 @@ struct AppTabView: View {
                     Label("Settings", systemImage: "slider.horizontal.3")
                 }
         }
-        .tint(Color(red: 0.99, green: 0.84, blue: 0.42))
-        .toolbarBackground(.visible, for: .tabBar)
-        .toolbarColorScheme(.dark, for: .tabBar)
-        .task {
-            configureTabBarAppearance()
+        .toolbar(.hidden, for: .tabBar)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            LiquidGlassTabBar(selectedTab: $store.selectedTab)
         }
     }
+}
 
-    private func configureTabBarAppearance() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
-        appearance.backgroundColor = UIColor(red: 0.10, green: 0.14, blue: 0.24, alpha: 0.62)
-        appearance.shadowColor = UIColor.white.withAlphaComponent(0.06)
+private struct LiquidGlassTabBar: View {
+    @Binding var selectedTab: AppTab
+    @Namespace private var selectionNamespace
 
-        let selectedColor = UIColor(red: 0.99, green: 0.84, blue: 0.42, alpha: 1.0)
-        let normalColor = UIColor.white.withAlphaComponent(0.82)
+    var body: some View {
+        HStack(spacing: 10) {
+            ForEach(AppTab.allCases) { tab in
+                Button {
+                    withAnimation(.spring(response: 0.34, dampingFraction: 0.84)) {
+                        selectedTab = tab
+                    }
+                } label: {
+                    ZStack {
+                        if selectedTab == tab {
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .fill(Color.clear)
+                                .frame(height: 42)
+                                .weatherGlassChip(
+                                    cornerRadius: 20,
+                                    tint: tab == .today ? WeatherGlassPalette.warm.opacity(0.18) : WeatherGlassPalette.cool.opacity(0.16),
+                                    interactive: true
+                                )
+                                .matchedGeometryEffect(id: "selected-tab", in: selectionNamespace)
+                        }
 
-        for itemAppearance in [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance] {
-            itemAppearance.selected.iconColor = selectedColor
-            itemAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
-            itemAppearance.normal.iconColor = normalColor
-            itemAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+                        VStack(spacing: selectedTab == tab ? 3 : 2) {
+                            Image(systemName: tab.symbol)
+                                .font(.caption.weight(.semibold))
+                            if selectedTab == tab {
+                                Text(tab.title)
+                                    .font(.caption2.weight(.semibold))
+                            }
+                        }
+                        .foregroundStyle(selectedTab == tab ? .white : .white.opacity(0.78))
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 8)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 42)
+                }
+                .buttonStyle(.plain)
+            }
         }
-
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
+        .padding(.horizontal, 8)
+        .padding(.top, 6)
+        .padding(.bottom, 8)
+        .background {
+            Color.clear
+                .weatherGlassCard(cornerRadius: 28, tint: WeatherGlassPalette.cool.opacity(0.10))
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 6)
     }
 }

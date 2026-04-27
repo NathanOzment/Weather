@@ -74,7 +74,7 @@ struct CityComparisonSection: View {
                 }
             }
             .padding(18)
-            .weatherGlassCard(cornerRadius: 28, tint: Color.white.opacity(0.08))
+            .weatherGlassCard(cornerRadius: 28, tint: WeatherGlassPalette.cool.opacity(0.14))
         }
     }
 

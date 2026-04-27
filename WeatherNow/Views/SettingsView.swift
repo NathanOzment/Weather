@@ -100,6 +100,6 @@ struct SettingsView: View {
             content()
         }
         .padding(18)
-        .weatherGlassCard(cornerRadius: 26, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 26, tint: WeatherGlassPalette.cool.opacity(0.14))
     }
 }

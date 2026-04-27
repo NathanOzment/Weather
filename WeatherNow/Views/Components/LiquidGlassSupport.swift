@@ -1,63 +1,51 @@
 import SwiftUI
 
+enum WeatherGlassPalette {
+    static let cool = Color(red: 0.43, green: 0.58, blue: 0.86)
+    static let slate = Color(red: 0.24, green: 0.32, blue: 0.53)
+    static let warm = Color(red: 0.99, green: 0.83, blue: 0.36)
+    static let mint = Color(red: 0.40, green: 0.82, blue: 0.72)
+}
+
 extension View {
     @ViewBuilder
     func weatherGlassCard(cornerRadius: CGFloat = 30, tint: Color? = nil, interactive: Bool = false) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
         if #available(iOS 26, *) {
-            background {
-                shape
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.16),
-                                (tint ?? Color.white.opacity(0.10)).opacity(0.55),
-                                Color.white.opacity(0.03)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .blendMode(.screen)
-            }
+            let glass = (tint.map { Glass.regular.tint($0.opacity(0.58)) } ?? .regular).interactive(interactive)
+            glassEffect(glass, in: shape)
             .overlay {
                 shape
-                    .strokeBorder(Color.white.opacity(0.16), lineWidth: 0.8)
-
-                shape
-                    .inset(by: 1)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.26),
-                                (tint ?? Color.white.opacity(0.10)).opacity(0.26),
-                                Color.white.opacity(0.02)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.2
-                    )
+                    .strokeBorder(Color.white.opacity(0.10), lineWidth: 0.8)
 
                 shape
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color.white.opacity(0.18),
-                                Color.white.opacity(0.04),
+                                Color.white.opacity(0.12),
+                                (tint ?? Color.white.opacity(0.05)).opacity(0.06),
                                 .clear
                             ],
                             startPoint: .topLeading,
-                            endPoint: .center
+                            endPoint: .bottomTrailing
                         )
                     )
                     .blendMode(.screen)
+
+                shape
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                .clear,
+                                Color.black.opacity(0.05)
+                            ],
+                            startPoint: .center,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .blendMode(.multiply)
             }
-            glassEffect(
-                (tint.map { Glass.regular.tint($0) } ?? .regular).interactive(interactive),
-                in: shape
-            )
             .shadow(color: .black.opacity(0.16), radius: 22, y: 12)
         } else {
             background(
@@ -91,30 +79,18 @@ extension View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
         if #available(iOS 26, *) {
-            background {
-                shape
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.14),
-                                (tint ?? Color.white.opacity(0.08)).opacity(0.55),
-                                Color.white.opacity(0.02)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .blendMode(.screen)
-            }
+            let glass = (tint.map { Glass.regular.tint($0.opacity(0.64)) } ?? .regular).interactive(interactive)
+            glassEffect(glass, in: shape)
             .overlay {
                 shape
-                    .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
+                    .strokeBorder(Color.white.opacity(0.10), lineWidth: 0.8)
 
                 shape
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color.white.opacity(0.16),
+                                Color.white.opacity(0.12),
+                                (tint ?? Color.white.opacity(0.05)).opacity(0.04),
                                 .clear
                             ],
                             startPoint: .topLeading,
@@ -123,10 +99,6 @@ extension View {
                     )
                     .blendMode(.screen)
             }
-            glassEffect(
-                (tint.map { Glass.regular.tint($0) } ?? .regular).interactive(interactive),
-                in: shape
-            )
             .shadow(color: .black.opacity(0.10), radius: 12, y: 6)
         } else {
             background(

@@ -19,7 +19,7 @@ struct CurrentConditionsCard: View {
         }
         .foregroundStyle(.white)
         .padding(24)
-        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 30, tint: WeatherGlassPalette.cool.opacity(0.16))
     }
 
     private var cardContent: some View {
@@ -68,36 +68,37 @@ struct CurrentConditionsCard: View {
                     .padding(.bottom, 18)
             }
 
-            HStack(spacing: 12) {
-                weatherMetric(title: "Feels Like", value: temperatureUnit.temperatureString(fromCelsius: snapshot.current.apparentTemperature))
-                weatherMetric(title: "Wind", value: temperatureUnit.speedString(fromKilometersPerHour: snapshot.current.windSpeed))
-                weatherMetric(title: "Humidity", value: "\(snapshot.current.humidity)%")
-                weatherMetric(title: "UV", value: "\(snapshot.current.uvIndex)")
+            HStack(spacing: 8) {
+                weatherMetric(title: "Feels", value: temperatureUnit.temperatureString(fromCelsius: snapshot.current.apparentTemperature), symbol: "thermometer.medium")
+                weatherMetric(title: "Wind", value: temperatureUnit.speedString(fromKilometersPerHour: snapshot.current.windSpeed), symbol: "wind")
+                weatherMetric(title: "Humidity", value: "\(snapshot.current.humidity)%", symbol: "humidity.fill")
+                weatherMetric(title: "UV", value: "\(snapshot.current.uvIndex)", symbol: "sun.max.fill")
             }
 
             HStack(spacing: 12) {
                 Button {
                     onShowDetails()
                 } label: {
-                    Label("Details", systemImage: "chart.line.uptrend.xyaxis")
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
+                    actionPill(
+                        title: "Details",
+                        symbol: "chart.line.uptrend.xyaxis",
+                        tint: WeatherGlassPalette.warm.opacity(0.18)
+                    )
                 }
-                .weatherGlassButton(prominent: true)
+                .buttonStyle(.plain)
 
                 Spacer()
 
                 Button {
                     onSaveCity()
                 } label: {
-                    Label("Save", systemImage: "plus.circle.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
+                    actionPill(
+                        title: "Save",
+                        symbol: "plus.circle.fill",
+                        tint: WeatherGlassPalette.slate.opacity(0.18)
+                    )
                 }
-                .weatherGlassButton()
-                .foregroundStyle(.white)
+                .buttonStyle(.plain)
             }
         }
     }
@@ -106,17 +107,36 @@ struct CurrentConditionsCard: View {
         temperatureUnit.temperatureString(fromCelsius: celsius).replacingOccurrences(of: "°", with: "")
     }
 
-    private func weatherMetric(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+    private func weatherMetric(title: String, value: String, symbol: String) -> some View {
+        VStack(alignment: .center, spacing: 6) {
+            Image(systemName: symbol)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.86))
+
             Text(title.uppercased())
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.72))
+                .lineLimit(1)
+
             Text(value)
-                .font(.headline.weight(.semibold))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+        .frame(maxWidth: .infinity, minHeight: 72)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 10)
+        .weatherGlassChip(cornerRadius: 18, tint: WeatherGlassPalette.slate.opacity(0.14))
         .contentTransition(.interpolate)
+    }
+
+    private func actionPill(title: String, symbol: String, tint: Color) -> some View {
+        Label(title, systemImage: symbol)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .weatherGlassChip(cornerRadius: 18, tint: tint, interactive: true)
     }
 }

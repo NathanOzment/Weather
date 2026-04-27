@@ -63,7 +63,9 @@ struct WeatherInsightsSection: View {
         VStack(alignment: .leading, spacing: 10) {
             Image(systemName: icon)
                 .font(.headline)
-                .foregroundStyle(.white.opacity(0.85))
+                .foregroundStyle(.white.opacity(0.88))
+                .padding(10)
+                .weatherGlassChip(cornerRadius: 16, tint: WeatherGlassPalette.slate.opacity(0.14))
             Text(title)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.white.opacity(0.7))
@@ -73,7 +75,7 @@ struct WeatherInsightsSection: View {
         }
         .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
         .padding(16)
-        .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 24, tint: WeatherGlassPalette.cool.opacity(0.14))
     }
 }
 
