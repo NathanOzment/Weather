@@ -4,6 +4,20 @@ struct AirQualitySection: View {
     let airQuality: AirQuality
 
     var body: some View {
+        Group {
+            if #available(iOS 26, *) {
+                GlassEffectContainer(spacing: 18) {
+                    sectionContent
+                }
+            } else {
+                sectionContent
+            }
+        }
+        .padding(18)
+        .weatherGlassCard(cornerRadius: 28, tint: tintColor.opacity(0.08))
+    }
+
+    private var sectionContent: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
@@ -35,9 +49,9 @@ struct AirQualitySection: View {
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(14)
+                .weatherGlassChip(cornerRadius: 20, tint: tintColor.opacity(0.10))
         }
-        .padding(18)
-        .weatherGlassCard(cornerRadius: 28, tint: tintColor.opacity(0.10))
     }
 
     private func metric(title: String, value: String) -> some View {
@@ -53,7 +67,7 @@ struct AirQualitySection: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+        .weatherGlassChip(cornerRadius: 18)
     }
 
     private var tintColor: Color {

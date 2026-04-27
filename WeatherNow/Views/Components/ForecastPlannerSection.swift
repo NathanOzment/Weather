@@ -14,29 +14,41 @@ struct ForecastPlannerSection: View {
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white)
 
-            VStack(alignment: .leading, spacing: 12) {
+            Group {
+                if #available(iOS 26, *) {
+                    GlassEffectContainer(spacing: 16) {
+                        plannerContent
+                    }
+                } else {
+                    plannerContent
+                }
+            }
+        }
+    }
+
+    private var plannerContent: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            plannerCard(
+                title: planner.bestWindowTitle,
+                body: planner.bestWindowBody,
+                icon: "clock.badge.checkmark",
+                tint: Color(red: 0.98, green: 0.76, blue: 0.33)
+            )
+
+            HStack(spacing: 12) {
                 plannerCard(
-                    title: planner.bestWindowTitle,
-                    body: planner.bestWindowBody,
-                    icon: "clock.badge.checkmark",
-                    tint: Color(red: 0.98, green: 0.76, blue: 0.33)
+                    title: "What to Wear",
+                    body: planner.wearAdvice,
+                    icon: "tshirt.fill",
+                    tint: Color(red: 0.47, green: 0.81, blue: 0.94)
                 )
 
-                HStack(spacing: 12) {
-                    plannerCard(
-                        title: "What to Wear",
-                        body: planner.wearAdvice,
-                        icon: "tshirt.fill",
-                        tint: Color(red: 0.47, green: 0.81, blue: 0.94)
-                    )
-
-                    plannerCard(
-                        title: "Heads Up",
-                        body: planner.cautionAdvice,
-                        icon: "exclamationmark.triangle.fill",
-                        tint: Color(red: 0.99, green: 0.54, blue: 0.40)
-                    )
-                }
+                plannerCard(
+                    title: "Heads Up",
+                    body: planner.cautionAdvice,
+                    icon: "exclamationmark.triangle.fill",
+                    tint: Color(red: 0.99, green: 0.54, blue: 0.40)
+                )
             }
         }
     }
@@ -60,7 +72,7 @@ struct ForecastPlannerSection: View {
         }
         .frame(maxWidth: .infinity, minHeight: 140, alignment: .topLeading)
         .padding(18)
-        .weatherGlassCard(cornerRadius: 24, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 24, tint: tint.opacity(0.08))
     }
 }
 

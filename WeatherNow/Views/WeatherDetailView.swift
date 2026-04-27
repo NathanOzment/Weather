@@ -19,18 +19,7 @@ struct WeatherDetailView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(snapshot.cityName)
-                            .font(.system(size: 38, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                        Text("Deep Dive")
-                            .font(.headline.weight(.medium))
-                            .foregroundStyle(.white.opacity(0.75))
-                        Label(snapshot.freshnessText, systemImage: snapshot.isStale ? "clock.badge.exclamationmark.fill" : "clock.fill")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(snapshot.isStale ? Color(red: 0.99, green: 0.84, blue: 0.42) : .white.opacity(0.82))
-                    }
-
+                    detailHeader
                     summaryCard
                     WeatherAlertsSection(snapshot: snapshot)
                     AirQualitySection(airQuality: snapshot.airQuality)
@@ -50,6 +39,45 @@ struct WeatherDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    private var detailHeader: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(snapshot.cityName)
+                .font(.system(size: 38, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            Group {
+                if #available(iOS 26, *) {
+                    GlassEffectContainer(spacing: 14) {
+                        headerChips
+                    }
+                } else {
+                    headerChips
+                }
+            }
+        }
+    }
+
+    private var headerChips: some View {
+        HStack(spacing: 10) {
+            Text("Deep Dive")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.92))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .weatherGlassChip(cornerRadius: 18)
+
+            Label(snapshot.freshnessText, systemImage: snapshot.isStale ? "clock.badge.exclamationmark.fill" : "clock.fill")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(snapshot.isStale ? Color(red: 0.99, green: 0.84, blue: 0.42) : .white.opacity(0.82))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .weatherGlassChip(
+                    cornerRadius: 18,
+                    tint: snapshot.isStale ? Color(red: 0.99, green: 0.84, blue: 0.42).opacity(0.12) : nil
+                )
+        }
+    }
+
     private var summaryCard: some View {
         Group {
             if #available(iOS 26, *) {
@@ -61,7 +89,7 @@ struct WeatherDetailView: View {
             }
         }
         .padding(24)
-        .weatherGlassCard(cornerRadius: 30, tint: Color.white.opacity(0.08))
+        .weatherGlassCard(cornerRadius: 30)
     }
 
     private var summaryCardContent: some View {
@@ -71,26 +99,45 @@ struct WeatherDetailView: View {
                     .font(.system(size: 38))
                     .symbolRenderingMode(.multicolor)
                     .padding(14)
-                    .weatherGlassChip(cornerRadius: 22, tint: Color.white.opacity(0.08))
+                    .weatherGlassChip(cornerRadius: 22)
                 Spacer()
                 Text(snapshot.current.condition.title)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.88))
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
-                    .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+                    .weatherGlassChip(cornerRadius: 18)
             }
 
             Text(temperatureUnit.temperatureString(fromCelsius: snapshot.current.temperature))
                 .font(.system(size: 72, weight: .semibold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Text("H: \(temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.high ?? snapshot.current.temperature))   L: \(temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.low ?? snapshot.current.temperature))")
-                .font(.headline)
-                .foregroundStyle(.white.opacity(0.82))
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .weatherGlassChip(cornerRadius: 18, tint: Color.white.opacity(0.08))
+            HStack(spacing: 12) {
+                temperatureChip(
+                    title: "High",
+                    value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.high ?? snapshot.current.temperature)
+                )
+                temperatureChip(
+                    title: "Low",
+                    value: temperatureUnit.temperatureString(fromCelsius: snapshot.daily.first?.low ?? snapshot.current.temperature)
+                )
+            }
         }
+    }
+
+    private func temperatureChip(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.white.opacity(0.7))
+            Text(value)
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .weatherGlassChip(cornerRadius: 18)
     }
 }
