@@ -92,6 +92,11 @@ final class WeatherStore: ObservableObject {
     func load() async {
         guard snapshot == nil, !isLoading else { return }
         if restoreLastViewedSnapshot() {
+            if showingSavedOnly {
+                await searchCity()
+            } else {
+                await refresh()
+            }
             return
         }
         await refresh()
@@ -102,6 +107,8 @@ final class WeatherStore: ObservableObject {
         errorMessage = nil
         statusMessage = nil
         isShowingCachedWeather = false
+        suggestions = []
+        suggestionTask?.cancel()
 
         do {
             let coordinates = try await locationService.requestCurrentLocation()
@@ -131,6 +138,8 @@ final class WeatherStore: ObservableObject {
         errorMessage = nil
         statusMessage = nil
         isShowingCachedWeather = false
+        suggestions = []
+        suggestionTask?.cancel()
 
         do {
             let coordinates = try await weatherService.geocode(city: trimmedQuery)
@@ -155,6 +164,8 @@ final class WeatherStore: ObservableObject {
         errorMessage = nil
         statusMessage = nil
         isShowingCachedWeather = false
+        suggestions = []
+        suggestionTask?.cancel()
 
         do {
             let weather = try await weatherService.fetchWeather(for: suggestion.coordinates, preferredName: suggestion.name)
@@ -361,6 +372,7 @@ final class WeatherStore: ObservableObject {
         snapshot = weather
         lastResolvedLocation = weather.cityName
         searchQuery = weather.cityName
+        suggestions = []
         self.showingSavedOnly = showingSavedOnly
         if !isShowingCachedWeather {
             statusMessage = nil

@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var store: WeatherStore
     @State private var showingDetails = false
+    @FocusState private var isSearchFocused: Bool
     @Namespace private var glassNamespace
 
     var body: some View {
@@ -154,15 +155,19 @@ struct HomeView: View {
                 .submitLabel(.search)
                 .foregroundStyle(.white)
                 .onChange(of: store.searchQuery) { _, _ in
+                    guard isSearchFocused else { return }
                     store.refreshSuggestions()
                 }
                 .onSubmit {
+                    isSearchFocused = false
                     Task {
                         await store.searchCity()
                     }
                 }
+                .focused($isSearchFocused)
 
             Button("Go") {
+                isSearchFocused = false
                 Task {
                     await store.searchCity()
                 }
@@ -173,8 +178,13 @@ struct HomeView: View {
         }
         .padding(14)
         .weatherGlassCard(cornerRadius: 20, tint: Color.white.opacity(0.08))
+        .onChange(of: isSearchFocused) { _, isFocused in
+            if !isFocused {
+                store.suggestions = []
+            }
+        }
         .overlay(alignment: .bottom) {
-            if !store.suggestions.isEmpty {
+            if isSearchFocused, !store.suggestions.isEmpty {
                 if #available(iOS 26, *) {
                     suggestionList
                         .padding(.top, 66)
@@ -236,6 +246,7 @@ struct HomeView: View {
             .pickerStyle(.segmented)
 
             Button {
+                isSearchFocused = false
                 Task {
                     await store.refresh()
                 }

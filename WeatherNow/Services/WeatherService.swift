@@ -319,7 +319,66 @@ private struct OpenMeteoAirQuality: Decodable {
 private extension JSONDecoder {
     static let weatherDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let rawValue = try container.decode(String.self)
+
+            if let date = WeatherDateParser.date(from: rawValue) {
+                return date
+            }
+
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Unsupported weather date value: \(rawValue)"
+            )
+        }
         return decoder
     }()
+}
+
+private enum WeatherDateParser {
+    private static let calendar = Calendar(identifier: .gregorian)
+
+    private static let dateOnlyFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private static let dateTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        return formatter
+    }()
+
+    private static let dateTimeSecondsFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter
+    }()
+
+    static func date(from rawValue: String) -> Date? {
+        if let date = ISO8601DateFormatter().date(from: rawValue) {
+            return date
+        }
+
+        if let date = dateTimeSecondsFormatter.date(from: rawValue) {
+            return date
+        }
+
+        if let date = dateTimeFormatter.date(from: rawValue) {
+            return date
+        }
+
+        return dateOnlyFormatter.date(from: rawValue)
+    }
 }

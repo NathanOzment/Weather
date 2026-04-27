@@ -93,6 +93,7 @@ struct SavedLocationsView: View {
                             }
                         }
                         .padding(20)
+                        .padding(.bottom, 120)
                     }
                 }
             }

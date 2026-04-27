@@ -36,16 +36,19 @@ struct OnboardingView: View {
             backgroundGradient
                 .ignoresSafeArea()
 
-            Group {
-                if #available(iOS 26, *) {
-                    GlassEffectContainer(spacing: 20) {
+            ScrollView(showsIndicators: false) {
+                Group {
+                    if #available(iOS 26, *) {
+                        GlassEffectContainer(spacing: 20) {
+                            onboardingContent
+                        }
+                    } else {
                         onboardingContent
                     }
-                } else {
-                    onboardingContent
                 }
+                .padding(24)
+                .padding(.bottom, 24)
             }
-            .padding(24)
         }
     }
 
